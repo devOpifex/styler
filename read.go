@@ -8,6 +8,8 @@ import (
 	"regexp"
 )
 
+type classes map[string]string
+
 type inputFile struct {
 	path     string
 	contents []string
@@ -58,6 +60,16 @@ func readFiles(dir string) ([]inputFile, error) {
 func (file inputFile) findClasses() {
 	r, _ := regexp.Compile("class[es]?\\s?\\=\\s?['|\"].*['|\"]")
 	for _, line := range file.contents {
-		fmt.Println(r.FindAllString(line, -1))
+		classes := r.FindAllString(line, -1)
+
+		if len(classes) == 0 {
+			continue
+		}
 	}
+}
+
+func (cls *classes) get(s string) {
+	r, _ := regexp.Compile(`[^"]+`)
+	matches := r.FindAllString(s, -1)
+	fmt.Println(matches)
 }
