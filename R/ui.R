@@ -2,7 +2,7 @@ ui <- function(req) {
   fluidPage(
     title = "Testing styler",
     div(
-      class = "p-4 m-2 bg-danger",
+      class = "p-4 m-2 bg-danger w-100 bw-2 bs-solid br-2",
       uiOutput("card")
     )
   )

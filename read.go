@@ -2,18 +2,24 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"regexp"
+	"strings"
 )
 
-type classes map[string]string
+type classMap struct {
+	m       map[string]int
+	classes []string
+	errors  []error
+}
 
 type inputFile struct {
 	path     string
 	contents []string
 }
+
+type inputFiles []inputFile
 
 func read(s string) (inputFile, error) {
 	inFile := inputFile{
@@ -35,14 +41,17 @@ func read(s string) (inputFile, error) {
 	return inFile, err
 }
 
-func readFiles(dir string) ([]inputFile, error) {
-	var fls []inputFile
+func readFiles(dir string) (classMap, error) {
+	var classes classMap
+	classes.m = make(map[string]int)
+
 	entries, err := os.ReadDir(dir)
 
 	if err != nil {
-		return fls, err
+		return classes, err
 	}
 
+	var fls inputFiles
 	for _, entry := range entries {
 		file, err := read(dir + "/" + entry.Name())
 
@@ -50,26 +59,71 @@ func readFiles(dir string) ([]inputFile, error) {
 			continue
 		}
 
-		file.findClasses()
 		fls = append(fls, file)
 	}
 
-	return fls, err
+	classes.parseClasses(fls)
+
+	return classes, err
 }
 
-func (file inputFile) findClasses() {
-	r, _ := regexp.Compile("class[es]?\\s?\\=\\s?['|\"].*['|\"]")
-	for _, line := range file.contents {
-		classes := r.FindAllString(line, -1)
+func (classes *classMap) parseClasses(files inputFiles) {
+	for _, file := range files {
+		classLines := file.findClassLines()
+		classes.getClasses(classLines)
+	}
+}
 
-		if len(classes) == 0 {
+func (file inputFile) findClassLines() []string {
+	var classes []string
+	r, _ := regexp.Compile(`class\s*=\s*(['"])([^'"]+)`)
+	for _, line := range file.contents {
+		withClass := r.FindAllString(line, -1)
+
+		if len(withClass) == 0 {
 			continue
+		}
+
+		classes = append(classes, withClass...)
+	}
+
+	return classes
+}
+
+func (classes *classMap) getClasses(lines []string) {
+	r, _ := regexp.Compile(`^.*"`)
+
+	for _, line := range lines {
+		split := strings.Split(line, "class")
+		for _, s := range split {
+			trimmed := r.ReplaceAllString(s, "")
+			trimmed = strings.TrimSpace(trimmed)
+
+			class := strings.Split(trimmed, " ")
+			classes.parse(class)
 		}
 	}
 }
 
-func (cls *classes) get(s string) {
-	r, _ := regexp.Compile(`[^"]+`)
-	matches := r.FindAllString(s, -1)
-	fmt.Println(matches)
+func (classes *classMap) parse(classString []string) {
+	for _, class := range classString {
+		// it's an empty class
+		if class == "" {
+			continue
+		}
+
+		// it's already mapped
+		_, ok := classes.m[class]
+		if ok {
+			continue
+		}
+
+		classes.m[class] = 0
+
+		m, err := match(class)
+
+		classes.classes = append(classes.classes, m)
+		classes.errors = append(classes.errors, err)
+	}
+
 }
