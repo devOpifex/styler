@@ -20,6 +20,8 @@ constraints we have to use another framework, e.g.: Bootstrap.
 
 You don't have to use the shorthands, 
 e.g.: `d-f` and `display-flex` are both correct.
+They simply translate to something else in the generated
+CSS.
 
 - `b`: `border`
 - `c`: `color`
@@ -29,6 +31,7 @@ e.g.: `d-f` and `display-flex` are both correct.
 - `p`: `padding`
 - `w`: `width`
 - `f`: `flex`
+- `t`: `font`
 - `bk`: `background`
 - `d`: `display`
 - `pos`: `position`

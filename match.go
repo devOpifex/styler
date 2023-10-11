@@ -19,6 +19,7 @@ var classesComponents = map[string]string{
 	"f":    "flex",
 	"bk":   "background",
 	"d":    "display",
+	"t":    "font",
 	"pos":  "position",
 	"rel":  "relative",
 	"abs":  "absolute",
