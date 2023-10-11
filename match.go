@@ -17,8 +17,6 @@ var classesComponents = map[string]string{
 	"p":    "padding",
 	"w":    "width",
 	"f":    "flex",
-	"gr":   "grow",
-	"sh":   "shrink",
 	"bk":   "background",
 	"d":    "display",
 	"pos":  "position",
@@ -26,14 +24,22 @@ var classesComponents = map[string]string{
 	"abs":  "absolute",
 	"full": "100%",
 	"ov":   "overflow",
+	"sh":   "shadow",
 }
 
 func parseError(s string) error {
-	return errors.New("could not map:" + s)
+	return errors.New("could not map class:" + s)
 }
 
-func makeClass(prefix, class, attr string) string {
-	return "." + class + prefix + "{" + attr + ";}"
+func makeClass(prefix, class, attr string) (string, error) {
+	if attr == "" {
+		return "", parseError(class)
+	}
+
+	if !strings.Contains(attr, ":") {
+		return "", parseError(class)
+	}
+	return "." + class + prefix + "{" + attr + ";}", nil
 }
 
 func match(str string) (string, error) {
@@ -58,13 +64,23 @@ func match(str string) (string, error) {
 			token = newtoken
 		}
 
-		// catches use of x, y, b, t
-		// e.g.: p-t-2 or p-x-2
+		if len(splitClass) > 1 && i == 0 {
+			// special case for shadow
+			// e.g.: sh-sm
+			shadow, ok := makeShadow(token, splitClass[i+1])
+
+			if ok {
+				return makeClass(prefix, str, shadow)
+			}
+		}
+
 		if len(splitClass)-1 > i && i > 0 {
+			// catches use of x, y, b, t
+			// e.g.: p-t-2 or p-x-2
 			newtoken, valid := makeXYTB(token, splitClass[i+1], previousToken)
 
 			if valid {
-				return makeClass(prefix, str, newtoken), nil
+				return makeClass(prefix, str, newtoken)
 			}
 		}
 
@@ -79,7 +95,7 @@ func match(str string) (string, error) {
 			}
 
 			style += ":" + token
-			return makeClass(prefix, str, style), nil
+			return makeClass(prefix, str, style)
 		}
 
 		previousToken = token
@@ -94,7 +110,7 @@ func match(str string) (string, error) {
 		// it's a color
 		if err == nil {
 			style += color
-			return makeClass(prefix, str, style), nil
+			return makeClass(prefix, str, style)
 		}
 
 		// it's a "simple color"
@@ -104,11 +120,11 @@ func match(str string) (string, error) {
 			// we want color: white
 			if token == "font" {
 				style += color
-				return makeClass(prefix, str, style), nil
+				return makeClass(prefix, str, style)
 			}
 			// results in e.g.: background-color: white;
 			style += token + "-" + color
-			return makeClass(prefix, str, style), nil
+			return makeClass(prefix, str, style)
 		}
 
 		// it's not a color
@@ -121,10 +137,10 @@ func match(str string) (string, error) {
 			return "", err
 		}
 
-		return makeClass(prefix, str, style), nil
+		return makeClass(prefix, str, style)
 	}
 
-	return makeClass(prefix, str, style), nil
+	return makeClass(prefix, str, style)
 }
 
 func isNumber(s string) bool {
