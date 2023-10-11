@@ -31,8 +31,8 @@ CSS.
 - `p`: `padding`
 - `w`: `width`
 - `f`: `flex`
-- `t`: `font`
-- `bk`: `background`
+- `t`: `font` (text)
+- `bk`: `background` (bg taken in many frameworks)
 - `d`: `display`
 - `pos`: `position`
 - `rel`: `relative`
@@ -41,10 +41,15 @@ CSS.
 - `ov`: `overflow`
 - `sh`: `shadow`
 
-Special case for shadow takes `sm`, `md`, or `lg` suffixes.
+## How it works
 
-Support for `x`, `y`, `t`, and `b`, e.g.: `p-x-2`
+- Special case for shadow takes `sm`, `md`, or `lg` suffixes.
+- Support for `x`, `y`, `t`, and `b`, e.g.: `p-x-2`
+- Tailwind's `hover:` prefix supported
+- All tailwind's colors included, e.g.: `t-red-100`
+- The last item in the string of attributes separated by `-` is the value, 
+e.g.: `background-color-red` translates to `background-color:red;`
+- Numeric values are divided by 4 treated as `rem`, e.g.: `b-r-2` translates
+to `border-radius:.25rem`, except for values `50` and `100` which are
+treated as percentages.
 
-Tailwind's `hover:` prefix supported
-
-All tailwind's colors included, e.g.: `t-red-100`
