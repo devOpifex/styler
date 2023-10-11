@@ -1,3 +1,3 @@
-module github.com/devOpifex/go-styler
+module github.com/devOpifex/styler
 
 go 1.18
