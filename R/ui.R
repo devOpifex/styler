@@ -3,7 +3,7 @@ ui <- function(req) {
     title = "Testing styler",
     class = "m-3",
     div(
-      class = "p-4 m-2 bg-danger w-100 bw-2 bs-solid br-2",
+      class = "p-4 m-2 bk-red-100 w-100 b-w-2 b-s-solid b-r-2",
       uiOutput("card")
     )
   )

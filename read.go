@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"log"
 	"os"
 	"regexp"
@@ -122,6 +123,7 @@ func (classes *classMap) parse(classString []string) {
 
 		m, err := match(class)
 
+		fmt.Println(m)
 		classes.classes = append(classes.classes, m)
 		classes.errors = append(classes.errors, err)
 	}

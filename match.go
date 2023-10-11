@@ -2,130 +2,175 @@ package main
 
 import (
 	"errors"
-	"regexp"
+	"fmt"
+	"math"
 	"strconv"
 	"strings"
 )
 
-var rPadding = regexp.MustCompile("^p(x|y|b|t)-|^p-")
-var rMargin = regexp.MustCompile("^m(x|y|b|t)-|^m-")
-var rWidth = regexp.MustCompile("^w-")
-var rHeight = regexp.MustCompile("^h-")
-var rRounded = regexp.MustCompile("^r-")
-var rBorderWidth = regexp.MustCompile("^bw-")
-var rBorderColor = regexp.MustCompile("^bc-")
-var rBorderStyle = regexp.MustCompile("^bs-")
+var classesComponents = map[string]string{
+	"b":    "border",
+	"c":    "color",
+	"s":    "size",
+	"r":    "radius",
+	"m":    "margin",
+	"p":    "padding",
+	"w":    "width",
+	"f":    "flex",
+	"gr":   "grow",
+	"sh":   "shrink",
+	"bk":   "background",
+	"d":    "display",
+	"pos":  "position",
+	"rel":  "relative",
+	"abs":  "absolute",
+	"full": "100%",
+	"ov":   "overflow",
+}
 
 func parseError(s string) error {
 	return errors.New("could not map:" + s)
 }
 
+func makeClass(prefix, class, attr string) string {
+	return "." + class + prefix + "{" + attr + ";}"
+}
+
 func match(str string) (string, error) {
-	var class string
+	var style string
 
-	if rPadding.MatchString(str) {
-		return makeAll(str, "padding", "p")
+	prefixSplit := strings.Split(str, ":")
+
+	var prefix = ""
+	if len(prefixSplit) > 1 {
+		prefix = ":" + prefixSplit[0]
 	}
 
-	if rMargin.MatchString(str) {
-		return makeAll(str, "margin", "m")
+	str = strings.Replace(str, "hover:", "", -1)
+	splitClass := strings.Split(str, "-")
+
+	var sep string
+	var previousToken string
+	for i, token := range splitClass {
+		newtoken, ok := classesComponents[token]
+
+		if ok {
+			token = newtoken
+		}
+
+		// catches use of x, y, b, t
+		// e.g.: p-t-2 or p-x-2
+		if len(splitClass)-1 > i && i > 0 {
+			newtoken, valid := makeXYTB(token, splitClass[i+1], previousToken)
+
+			if valid {
+				return makeClass(prefix, str, newtoken), nil
+			}
+		}
+
+		// last should always be the attribute value
+		if !isColor(token) && len(splitClass) > 1 && i == len(splitClass)-1 {
+
+			// numbers are treated as rem
+			// except 50 and 100 as %
+			// and shrink and grow as int, e.g.: flex-grow:1
+			if isNumber(token) {
+				token = converNumber(token, splitClass[i-1])
+			}
+
+			style += ":" + token
+			return makeClass(prefix, str, style), nil
+		}
+
+		previousToken = token
+
+		if sep != "-" && i > 0 {
+			sep = "-"
+		}
+
+		// special handling of colors
+		color, err := makeColor(splitClass[i:])
+
+		// it's a color
+		if err == nil {
+			style += color
+			return makeClass(prefix, str, style), nil
+		}
+
+		// it's a "simple color"
+		// e.g.: bk-white
+		if errors.Is(err, errSimpleColor) {
+			// text-white converts to font-white
+			// we want color: white
+			if token == "font" {
+				style += color
+				return makeClass(prefix, str, style), nil
+			}
+			// results in e.g.: background-color: white;
+			style += token + "-" + color
+			return makeClass(prefix, str, style), nil
+		}
+
+		// it's not a color
+		if errors.Is(err, errNotColor) {
+			style += sep + token
+			continue
+		}
+
+		if err != nil {
+			return "", err
+		}
+
+		return makeClass(prefix, str, style), nil
 	}
 
-	if rWidth.MatchString(str) {
-		return makeSimple(str, "width", "w")
-	}
-
-	if rHeight.MatchString(str) {
-		return makeSimple(str, "height", "h")
-	}
-
-	if rRounded.MatchString(str) {
-		return makeSimple(str, "border-radius", "r")
-	}
-
-	if rBorderWidth.MatchString(str) {
-		return makeSimple(str, "border-width", "bw")
-	}
-
-	if rBorderStyle.MatchString(str) {
-		return makeSimple(str, "border-style", "bs")
-	}
-
-	return class, parseError(str)
-}
-
-func makeXYTB(s, t, m string) (string, error) {
-	split := strings.Split(s, "-")
-
-	if len(split) != 2 {
-		return "", parseError(s)
-	}
-
-	var end string
-	if isNumber(split[1]) {
-		end = "rem"
-	}
-
-	if split[0] == m+`x` {
-		return `.` + s + `{` + t + `-left:` + split[1] + end + ";" + t + `-right:` + split[1] + end + `;}`, nil
-	}
-
-	if split[0] == m+`y` {
-		return `.` + s + `{` + t + `-top:` + split[1] + end + ";" + t + `-bottom:` + split[1] + end + `;}`, nil
-	}
-
-	if split[0] == m+`t` {
-		return `.` + s + `{` + t + `-top:` + split[1] + end + `;}`, nil
-	}
-
-	if split[0] == m+`b` {
-		return `.` + s + `{` + t + `-bottom:` + split[1] + end + `;}`, nil
-	}
-
-	return "", parseError(s)
-}
-
-func makeSimple(s, t, m string) (string, error) {
-	split := strings.Split(s, "-")
-
-	if len(split) != 2 {
-		return "", parseError(s)
-	}
-
-	// for heights and widths
-	if split[1] == "100" {
-		split[1] = "100%"
-	}
-
-	// for heights and widths
-	if split[1] == "50" {
-		split[1] = "50%"
-	}
-
-	var end string
-	if isNumber(split[1]) {
-		end = "rem"
-	}
-
-	if split[0] == m {
-		return `.` + s + `{` + t + `:` + split[1] + end + `;}`, nil
-	}
-
-	return "", parseError(s)
-}
-
-func makeAll(s, t, m string) (string, error) {
-	cl, err := makeSimple(s, t, m)
-
-	if err == nil {
-		return cl, err
-	}
-
-	return makeXYTB(s, t, m)
+	return makeClass(prefix, str, style), nil
 }
 
 func isNumber(s string) bool {
 	_, err := strconv.Atoi(s)
 
 	return err == nil
+}
+
+func roundFloat(val float64, precision uint) float64 {
+	ratio := math.Pow(10, float64(precision))
+	return math.Round(val*ratio) / ratio
+}
+
+func converNumber(s, previous string) string {
+	if previous == "grow" || previous == "shrink" {
+		return s
+	}
+
+	if s == "50" || s == "100" {
+		return s + "%"
+	}
+
+	num, _ := strconv.Atoi(s)
+
+	// we divide by 4
+	numf := roundFloat(float64(num)/4, 2)
+
+	return fmt.Sprintf("%vrem", numf)
+}
+
+func makeXYTB(token, next, previous string) (string, bool) {
+	if token == "x" {
+		return previous + "-left:" + next + ";" + previous + "-right:" + next, true
+	}
+
+	if token == "y" {
+		return previous + "-top:" + next + ";" + previous + "-bottom:" + next, true
+	}
+
+	if token == "t" {
+		return previous + "-top:" + next + ";", true
+	}
+
+	if token == "b" {
+		return previous + "-bottom:" + next + ";", true
+	}
+
+	return "", false
 }
