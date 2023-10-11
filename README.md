@@ -12,8 +12,14 @@ constraints we have to use another framework, e.g.: Bootstrap.
 </div>
 ```
 
-```go
-./styler -dir=src -out=styles.css -warn=false
+```bash
+styler -dir=src -out=styles.css -warn=false
+```
+
+## Install
+
+```bash
+go install github.com/devOpifex/styler
 ```
 
 ## Shorthands
