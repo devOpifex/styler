@@ -5,6 +5,8 @@ Tool to generate CSS classes, a bit like tailwind but less strict.
 For cases where we cannot use tailwind because of whatever
 constraints, e.g.: using Shiny forcing Bootstrap.
 
+Styler will scan for `class=""`.
+
 ```html
 <!--src/file.html-->
 <div class="m-2 b-r-2 b-c-red b-w-1 pos-rel">
