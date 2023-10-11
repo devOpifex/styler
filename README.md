@@ -13,13 +13,13 @@ constraints, e.g.: using Shiny forcing Bootstrap.
 ```
 
 ```bash
-styler -dir=src -out=styles.css -warn=false
+go-styler -dir=src -out=styles.css -warn=false
 ```
 
 ## Install
 
 ```bash
-go install github.com/devOpifex/styler
+go install github.com/devOpifex/go-styler
 ```
 
 ## Shorthands
