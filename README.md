@@ -1,6 +1,6 @@
 # Styler
 
-Tool to generate CSS class but less strict.
+Tool to generate CSS classes, a bit like tailwind but less strict.
 
 ```html
 <!--src/file.html-->
