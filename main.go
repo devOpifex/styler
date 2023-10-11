@@ -8,7 +8,8 @@ import (
 func main() {
 	var dir = flag.String("dir", "R", "Directory containing files to process")
 	var out = flag.String("out", "styles.css", "Path to output CSS")
-	var warn = flag.Bool("warn", false, "Whether to warn on classes that fail to parse")
+	var warn = flag.Bool("warn", false, "Print warnings")
+	var verbose = flag.Bool("verbose", false, "Verbose output")
 	flag.Parse()
 
 	classes, err := readFiles(*dir)
@@ -16,8 +17,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = classes.make(*out, *warn)
+	err = classes.css(*out)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	classes.verbose(*verbose, *warn)
 }

@@ -17,9 +17,12 @@ var classesComponents = map[string]string{
 	"p":    "padding",
 	"w":    "width",
 	"f":    "flex",
+	"t":    "font",
+	"a":    "align",
+	"j":    "justify",
+	"i":    "items",
 	"bk":   "background",
 	"d":    "display",
-	"t":    "font",
 	"pos":  "position",
 	"rel":  "relative",
 	"abs":  "absolute",
@@ -55,6 +58,10 @@ func match(str string) (string, error) {
 
 	str = strings.Replace(str, "hover:", "", -1)
 	str = strings.Replace(str, "focus:", "", -1)
+
+	str = preReplace(str)
+
+	// split class into tokens
 	splitClass := strings.Split(str, "-")
 
 	var sep string

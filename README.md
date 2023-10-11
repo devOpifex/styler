@@ -37,6 +37,9 @@ CSS.
 - `p`: `padding`
 - `w`: `width`
 - `f`: `flex`
+- `a`: `align`
+- `j`: `justify`
+- `i`: `items`
 - `t`: `font` (text)
 - `bk`: `background` (bg taken in many frameworks)
 - `d`: `display`
