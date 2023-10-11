@@ -12,3 +12,31 @@ Tool to generate CSS classes, a bit like tailwind but less strict.
 ```go
 ./styler -dir=src -out=styles.css -warn=false
 ```
+
+## Shorthands
+
+You don't have to use the shorthands, 
+e.g.: `d-f` and `display-flex` are both correct.
+
+- `b`: `border`
+- `c`: `color`
+- `s`: `size`
+- `r`: `radius`
+- `m`: `margin`
+- `p`: `padding`
+- `w`: `width`
+- `f`: `flex`
+- `bk`: `background`
+- `d`: `display`
+- `pos`: `position`
+- `rel`: `relative`
+- `abs`: `absolute`
+- `full`: `100%`
+- `ov`: `overflow`
+- `sh`: `shadow`
+
+Special case for shadow takes `sm`, `md`, or `lg` suffixes.
+
+Tailwind's `hover:` prefix supported
+
+All tailwind's colors included, e.g.: `t-red-100`
