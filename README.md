@@ -2,8 +2,8 @@
 
 Tool to generate CSS classes, a bit like tailwind but less strict.
 
-It's for the cases where we cannot use tailwind because of whatever
-constraints we have to use another framework, e.g.: Bootstrap.
+For cases where we cannot use tailwind because of whatever
+constraints, e.g.: using Shiny forcing Bootstrap.
 
 ```html
 <!--src/file.html-->
