@@ -15,7 +15,7 @@ var rJustify = regexp.MustCompile(`^(justify-|j-)`)
 
 var replace = replacors{
 	{expr: rBold, str: "-weight-bold"},
-	{expr: rJustify, str: "text-center-"},
+	{expr: rJustify, str: "justify-content-center"},
 	{expr: rTextCenter, str: "text-align-center"},
 }
 
