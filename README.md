@@ -45,11 +45,11 @@ CSS.
 
 - Special case for shadow takes `sm`, `md`, or `lg` suffixes.
 - Support for `x`, `y`, `t`, and `b`, e.g.: `p-x-2`
-- Tailwind's `hover:` prefix supported
+- Tailwind's `hover:`, and `focus:` pseudo classes
 - All tailwind's colors included, e.g.: `t-red-100`
 - The last item in the string of attributes separated by `-` is the value, 
 e.g.: `background-color-red` translates to `background-color:red;`
-- Numeric values are divided by 4 treated as `rem`, e.g.: `b-r-2` translates
+- Numeric values are divided by 4 and treated as `rem`, e.g.: `b-r-2` translates
 to `border-radius:.25rem`, except for values `50` and `100` which are
 treated as percentages.
 
