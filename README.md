@@ -9,7 +9,7 @@ Styler will scan for `class=""`.
 
 ```html
 <!--src/file.html-->
-<div class="m-2 b-r-2 b-c-red b-w-1 pos-rel">
+<div class="m-2 b-r-2 b-red-100 b-w-1 pos-rel">
     <h1 class="t-bold t-red-400">Hello</h1>
 </div>
 ```
@@ -52,7 +52,7 @@ CSS.
 - `ov`: `overflow`
 - `sh`: `shadow`
 
-## How it works
+## Details
 
 - Special case for shadow takes `sm`, `md`, or `lg` suffixes.
 - Support for `x`, `y`, `t`, and `b`, e.g.: `p-x-2`
