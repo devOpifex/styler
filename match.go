@@ -53,6 +53,7 @@ func makeClass(prefix, class, attr string) (string, error) {
 
 	class = strings.Replace(class, ".", "\\.", -1)
 	class = strings.Replace(class, "~", "\\~", -1)
+	class = strings.Replace(class, "%", "\\%", -1)
 
 	return "." + suffix + class + prefix + "{" + attr + ";}", nil
 }
