@@ -43,7 +43,13 @@ func makeClass(prefix, class, attr string) (string, error) {
 	if !strings.Contains(attr, ":") {
 		return "", parseError(class)
 	}
-	return "." + class + prefix + "{" + attr + ";}", nil
+
+	var suffix string
+	if prefix != "" {
+		suffix = strings.Replace(prefix, ":", "", -1)
+		suffix = suffix + "\\:"
+	}
+	return "." + suffix + class + prefix + "{" + attr + ";}", nil
 }
 
 func match(str string) (string, error) {
