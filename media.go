@@ -40,19 +40,19 @@ func isMedia(s string) bool {
 }
 
 func getMedia(s string) string {
-	if strings.Contains(s, "sm:") {
+	if strings.Contains(s, "sm\\:") {
 		return "sm"
 	}
 
-	if strings.Contains(s, "md:") {
+	if strings.Contains(s, "md\\:") {
 		return "md"
 	}
 
-	if strings.Contains(s, "lg:") {
+	if strings.Contains(s, "lg\\:") {
 		return "lg"
 	}
 
-	if strings.Contains(s, "xl:") {
+	if strings.Contains(s, "xl\\:") {
 		return "xl"
 	}
 
@@ -60,7 +60,7 @@ func getMedia(s string) string {
 }
 
 func makeMedia(prefix, class, attr, suffix string) (string, error) {
-	media := getMedia(prefix)
+	media := getMedia(suffix)
 	m, _ := mediaQueries[media]
-	return "@media (max-width: " + m + "px){" + "." + suffix + prefix + "{" + attr + ";}" + "}", nil
+	return "@media (min-width: " + m + "px){" + "." + suffix + prefix + "{" + attr + ";}" + "}", nil
 }
