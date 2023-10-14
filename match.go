@@ -62,8 +62,10 @@ func match(str string) (string, error) {
 		prefix = ":" + prefixSplit[0]
 	}
 
+	// states
 	str = strings.Replace(str, "hover:", "", -1)
 	str = strings.Replace(str, "focus:", "", -1)
+	str = strings.Replace(str, "disabled:", "", -1)
 
 	str = preReplace(str)
 
