@@ -49,6 +49,10 @@ func makeClass(prefix, class, attr string) (string, error) {
 		suffix = strings.Replace(prefix, ":", "", -1)
 		suffix = suffix + "\\:"
 	}
+
+	class = strings.Replace(class, ".", "\\.", -1)
+	class = strings.Replace(class, "~", "\\~", -1)
+
 	return "." + suffix + class + prefix + "{" + attr + ";}", nil
 }
 
@@ -108,7 +112,7 @@ func match(str string) (string, error) {
 			// except 50 and 100 as %
 			// and shrink and grow as int, e.g.: flex-grow:1
 			if isNumber(token) {
-				token = converNumber(token, splitClass[i-1])
+				token = convertNumber(token, splitClass[i-1])
 			}
 
 			style += ":" + token
@@ -161,6 +165,10 @@ func match(str string) (string, error) {
 }
 
 func isNumber(s string) bool {
+	if strings.Contains(s, "~") {
+		return true
+	}
+
 	_, err := strconv.Atoi(s)
 
 	return err == nil
@@ -171,21 +179,28 @@ func roundFloat(val float64, precision uint) float64 {
 	return math.Round(val*ratio) / ratio
 }
 
-func converNumber(s, previous string) string {
+func convertNumber(s, previous string) string {
+	isStrict := strings.Contains(s, "~")
+
 	if previous == "grow" || previous == "shrink" {
 		return s
 	}
 
-	if s == "50" || s == "100" {
+	if !isStrict && (s == "50" || s == "100") {
 		return s + "%"
 	}
 
-	num, _ := strconv.Atoi(s)
+	s = strings.Replace(s, "~", "", -1)
+
+	num, _ := strconv.ParseFloat(s, 64)
 
 	// we divide by 4
-	numf := roundFloat(float64(num)/4, 2)
+	// if it's not a strict number
+	if !isStrict {
+		num = roundFloat(num/4, 2)
+	}
 
-	return fmt.Sprintf("%vrem", numf)
+	return fmt.Sprintf("%vrem", num)
 }
 
 func makeXYTB(token, next, previous string) (string, bool) {

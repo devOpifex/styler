@@ -63,4 +63,6 @@ e.g.: `background-color-red` translates to `background-color:red;`
 - Numeric values are divided by 4 and treated as `rem`, e.g.: `b-r-2` translates
 to `border-radius:.25rem`, except for values `50` and `100` which are
 treated as percentages.
+You can prevent that by prefixing a number with `~` in which case it is treated as
+"strict," e.g.: `b-w-~0.1` leads to `border-width:0.1rem`;
 
