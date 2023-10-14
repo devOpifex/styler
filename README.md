@@ -66,4 +66,5 @@ to `border-radius:.25rem`, except for values `50` and `100` which are
 treated as percentages.
 You can prevent that by prefixing a number with `~` in which case it is treated as
 "strict," e.g.: `border-w-~0.1` leads to `border-width:0.1rem`;
+- Support for responsive `sm:`, `md:`, `lg:`, `xl:`, and `2xl:` prefixes.
 

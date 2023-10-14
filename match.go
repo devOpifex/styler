@@ -55,6 +55,10 @@ func makeClass(prefix, class, attr string) (string, error) {
 	class = strings.Replace(class, "~", "\\~", -1)
 	class = strings.Replace(class, "%", "\\%", -1)
 
+	if isMedia(suffix) {
+		return makeMedia(class, prefix, attr, suffix)
+	}
+
 	return "." + suffix + class + prefix + "{" + attr + ";}", nil
 }
 
@@ -72,6 +76,11 @@ func match(str string) (string, error) {
 	str = strings.Replace(str, "hover:", "", -1)
 	str = strings.Replace(str, "focus:", "", -1)
 	str = strings.Replace(str, "disabled:", "", -1)
+	str = strings.Replace(str, "sm:", "", -1)
+	str = strings.Replace(str, "md:", "", -1)
+	str = strings.Replace(str, "lg:", "", -1)
+	str = strings.Replace(str, "xl:", "", -1)
+	str = strings.Replace(str, "2xl:", "", -1)
 
 	str = preReplace(str)
 
