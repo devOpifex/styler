@@ -9,8 +9,8 @@ Styler will scan for `class=""`.
 
 ```html
 <!--src/file.html-->
-<div class="margin-2 border-radius-2 border-red-100 border-width-1 position-relative">
-    <h1 class="font-bold text-red-400">Hello</h1>
+<div class="margin-2 sm:margin-0 border-radius-2 border-red-100 border-width-1 position-relative">
+    <h1 class="hover:font-bold text-red-400">Hello</h1>
 </div>
 ```
 
