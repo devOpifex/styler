@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"regexp"
 	"strings"
 )
@@ -61,10 +60,7 @@ func getMedia(s string) string {
 }
 
 func makeMedia(prefix, class, attr, suffix string) (string, error) {
-	fmt.Println(prefix)
 	media := getMedia(prefix)
 	m, _ := mediaQueries[media]
-	fmt.Println("----")
-	defer fmt.Println("----")
 	return "@media (max-width: " + m + "px){" + "." + suffix + prefix + "{" + attr + ";}" + "}", nil
 }
