@@ -9,7 +9,8 @@ import (
 )
 
 var classesComponents = map[string]string{
-	"b":    "border",
+	"b":    "bottom",
+	"t":    "top",
 	"c":    "color",
 	"s":    "size",
 	"r":    "radius",
@@ -17,7 +18,7 @@ var classesComponents = map[string]string{
 	"p":    "padding",
 	"w":    "width",
 	"f":    "flex",
-	"t":    "font",
+	"text": "font",
 	"a":    "align",
 	"j":    "justify",
 	"i":    "items",

@@ -9,7 +9,7 @@ Styler will scan for `class=""`.
 
 ```html
 <!--src/file.html-->
-<div class="m-2 b-r-2 b-red-100 b-w-1 pos-rel">
+<div class="m-2 border-r-2 border-red-100 border-w-1 pos-rel">
     <h1 class="t-bold t-red-400">Hello</h1>
 </div>
 ```
@@ -31,7 +31,8 @@ e.g.: `d-f` and `display-flex` are both correct.
 They simply translate to something else in the generated
 CSS.
 
-- `b`: `border`
+- `b`: `bottom`
+- `t`: `top`
 - `c`: `color`
 - `s`: `size`
 - `r`: `radius`
@@ -42,7 +43,6 @@ CSS.
 - `a`: `align`
 - `j`: `justify`
 - `i`: `items`
-- `t`: `font` (text)
 - `bk`: `background` (bg taken in many frameworks)
 - `d`: `display`
 - `pos`: `position`
@@ -51,6 +51,7 @@ CSS.
 - `full`: `100%`
 - `ov`: `overflow`
 - `sh`: `shadow`
+- `text`: `font`
 
 ## Details
 
@@ -60,9 +61,9 @@ CSS.
 - All tailwind's colors included, e.g.: `t-red-100`
 - The last item in the string of attributes separated by `-` is the value, 
 e.g.: `background-color-red` translates to `background-color:red;`
-- Numeric values are divided by 4 and treated as `rem`, e.g.: `b-r-2` translates
+- Numeric values are divided by 4 and treated as `rem`, e.g.: `border-r-2` translates
 to `border-radius:.25rem`, except for values `50` and `100` which are
 treated as percentages.
 You can prevent that by prefixing a number with `~` in which case it is treated as
-"strict," e.g.: `b-w-~0.1` leads to `border-width:0.1rem`;
+"strict," e.g.: `border-w-~0.1` leads to `border-width:0.1rem`;
 
