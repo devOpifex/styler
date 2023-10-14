@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 )
 
@@ -11,6 +12,11 @@ func main() {
 	var warn = flag.Bool("warn", false, "Print warnings")
 	var verbose = flag.Bool("verbose", false, "Verbose output")
 	flag.Parse()
+
+	if dirNotExists(*dir) {
+		fmt.Println("directory `" + *dir + "` does not exist")
+		return
+	}
 
 	classes, err := readFiles(*dir)
 	if err != nil {
