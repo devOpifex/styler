@@ -9,9 +9,10 @@ import (
 )
 
 type classMap struct {
-	m       map[string]int
-	classes []string
-	errors  []error
+	m        map[string]int
+	classes  []string
+	suffixes []string
+	errors   []error
 }
 
 type inputFile struct {
@@ -133,9 +134,10 @@ func (classes *classMap) parse(classString []string) {
 
 		classes.m[class] = 0
 
-		m, err := match(class)
+		m, suffix, err := match(class)
 
 		classes.classes = append(classes.classes, m)
+		classes.suffixes = append(classes.suffixes, suffix)
 		classes.errors = append(classes.errors, err)
 	}
 

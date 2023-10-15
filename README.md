@@ -15,13 +15,13 @@ Styler will scan for `class=""`.
 ```
 
 ```bash
-styler -dir=src -out=styles.css -warn=false
+styler -dir=src -output=styles.css -verbose=false
 ```
 
 or 
 
 ```bash
-styler -file=src/file.html -out=styles.css -warn=false
+styler -file=src/file.html -output=styles.css -verbose=false
 ```
 
 ## Install

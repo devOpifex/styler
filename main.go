@@ -9,7 +9,7 @@ import (
 func main() {
 	var dir = flag.String("dir", "R", "Directory containing files to process")
 	var file = flag.String("file", "", "File to process")
-	var out = flag.String("out", "style.min.css", "Path to output CSS file")
+	var out = flag.String("output", "style.min.css", "Path to output CSS file")
 	var warn = flag.Bool("warn", false, "Print warnings")
 	var verbose = flag.Bool("verbose", false, "Verbose output")
 	flag.Parse()

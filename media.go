@@ -59,8 +59,8 @@ func getMedia(s string) string {
 	return "2xl"
 }
 
-func makeMedia(prefix, class, attr, suffix string) (string, error) {
+func makeMedia(prefix, class, attr, suffix string) (string, string, error) {
 	media := getMedia(suffix)
 	m, _ := mediaQueries[media]
-	return "@media (min-width: " + m + "px){" + "." + suffix + prefix + "{" + attr + ";}" + "}", nil
+	return "." + suffix + prefix + "{" + attr + ";}" + "}", m, nil
 }

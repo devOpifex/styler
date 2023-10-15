@@ -36,13 +36,13 @@ func parseError(s string) error {
 	return errors.New("could not map class:" + s)
 }
 
-func makeClass(prefix, class, attr string) (string, error) {
+func makeClass(prefix, class, attr string) (string, string, error) {
 	if attr == "" {
-		return "", parseError(class)
+		return "", "", parseError(class)
 	}
 
 	if !strings.Contains(attr, ":") {
-		return "", parseError(class)
+		return "", "", parseError(class)
 	}
 
 	var suffix string
@@ -59,10 +59,10 @@ func makeClass(prefix, class, attr string) (string, error) {
 		return makeMedia(class, prefix, attr, suffix)
 	}
 
-	return "." + suffix + class + prefix + "{" + attr + ";}", nil
+	return "." + suffix + class + prefix + "{" + attr + ";}", "", nil
 }
 
-func match(str string) (string, error) {
+func match(str string) (string, string, error) {
 	var style string
 
 	prefixSplit := strings.Split(str, ":")
@@ -166,7 +166,7 @@ func match(str string) (string, error) {
 		}
 
 		if err != nil {
-			return "", err
+			return "", "", err
 		}
 
 		return makeClass(prefix, str, style)

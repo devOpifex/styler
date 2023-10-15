@@ -16,9 +16,36 @@ func (classes *classMap) css(file string) error {
 
 	var css string
 	var total int
-	for _, class := range classes.classes {
+
+	// "standard" classes
+	for i, class := range classes.classes {
+		if classes.suffixes[i] != "" {
+			continue
+		}
+
 		css += class
 		total++
+	}
+
+	// group media queries
+	mq := make(map[string][]string)
+	for i, class := range classes.classes {
+		if classes.suffixes[i] == "" {
+			continue
+		}
+
+		mq[classes.suffixes[i]] = append(mq[classes.suffixes[i]], class)
+	}
+
+	for key, media := range mq {
+		css += "@media (min-width: " + key + "px){"
+
+		for _, class := range media {
+			css += class
+			total++
+		}
+
+		css += "}"
 	}
 
 	cssByte := []byte(css)
