@@ -41,6 +41,19 @@ func read(s string) (inputFile, error) {
 	return inFile, err
 }
 
+func readFile(file string) (classMap, error) {
+	var classes classMap
+	classes.m = make(map[string]int)
+
+	var fls inputFiles
+	fl, err := read(file)
+	fls = append(fls, fl)
+
+	classes.parseClasses(fls)
+
+	return classes, err
+}
+
 func readFiles(dir string) (classMap, error) {
 	var classes classMap
 	classes.m = make(map[string]int)

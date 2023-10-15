@@ -8,17 +8,26 @@ import (
 
 func main() {
 	var dir = flag.String("dir", "R", "Directory containing files to process")
+	var file = flag.String("file", "", "File to process")
 	var out = flag.String("out", "style.min.css", "Path to output CSS file")
 	var warn = flag.Bool("warn", false, "Print warnings")
 	var verbose = flag.Bool("verbose", false, "Verbose output")
 	flag.Parse()
 
-	if dirNotExists(*dir) {
-		fmt.Println("directory `" + *dir + "` does not exist")
-		return
+	var classes classMap
+	var err error
+	if *file == "" {
+		if dirNotExists(*dir) {
+			fmt.Println("directory `" + *dir + "` does not exist")
+			return
+		}
+		classes, err = readFiles(*dir)
 	}
 
-	classes, err := readFiles(*dir)
+	if *file != "" {
+		classes, err = readFile(*file)
+	}
+
 	if err != nil {
 		log.Fatal(err)
 	}

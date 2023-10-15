@@ -18,6 +18,12 @@ Styler will scan for `class=""`.
 styler -dir=src -out=styles.css -warn=false
 ```
 
+or 
+
+```bash
+styler -file=src/file.html -out=styles.css -warn=false
+```
+
 ## Install
 
 ```bash
