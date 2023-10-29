@@ -27,7 +27,7 @@ styler -file=src/file.html -output=styles.css -verbose=false
 ## Install
 
 ```bash
-go install github.com/devOpifex/styler
+go install github.com/devOpifex/styler@latest
 ```
 
 ## Shorthands
