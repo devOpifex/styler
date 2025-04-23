@@ -54,4 +54,5 @@ func (c Command) build() {
 		fmt.Println(err)
 		return
 	}
+
 }

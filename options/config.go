@@ -2,8 +2,11 @@ package options
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 )
+
+var configPath string = ".styler"
 
 type Config struct {
 	Pattern   string
@@ -21,17 +24,19 @@ func new() Config {
 
 func Create() {
 	conf := new()
-	confJson, _ := json.Marshal(conf)
-	err := os.WriteFile("config.json", confJson, 0644)
+	confJson, _ := json.MarshalIndent(conf, "", "    ")
+	err := os.WriteFile(configPath, confJson, 0644)
 
 	if err != nil {
 		panic(err)
 	}
+
+	fmt.Println("Config file created at", configPath)
 }
 
 func Read() (Config, error) {
 	var conf Config
-	file, err := os.ReadFile("config.json")
+	file, err := os.ReadFile(configPath)
 
 	if err != nil {
 		return conf, err
