@@ -37,8 +37,7 @@ func (o Options) check() bool {
 	}
 
 	if !o.Build && !o.Create {
-		fmt.Println("You must use either -build or -create")
-		return false
+		o.Build = true
 	}
 
 	return true

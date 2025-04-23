@@ -29,19 +29,19 @@ func Create() {
 	}
 }
 
-func Read() Config {
+func Read() (Config, error) {
 	var conf Config
 	file, err := os.ReadFile("config.json")
 
 	if err != nil {
-		panic(err)
+		return conf, err
 	}
 
 	err = json.Unmarshal(file, &conf)
 
 	if err != nil {
-		panic(err)
+		return conf, err
 	}
 
-	return conf
+	return conf, nil
 }
