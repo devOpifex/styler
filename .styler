@@ -1,5 +1,0 @@
-{
-    "Pattern": "*.r|*.js|*.html",
-    "Directory": ".",
-    "Output": "style.min.css"
-}

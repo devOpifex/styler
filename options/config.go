@@ -23,6 +23,11 @@ func new() Config {
 }
 
 func Create() {
+	if _, err := os.Stat(configPath); err == nil {
+		fmt.Println(".styler already exists")
+		return
+	}
+
 	conf := new()
 	confJson, _ := json.MarshalIndent(conf, "", "    ")
 	err := os.WriteFile(configPath, confJson, 0644)
