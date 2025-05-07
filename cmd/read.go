@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 )
 
-func (c Command) read() error {
+func (c *Command) read() error {
 	info, err := os.Stat(c.Config.Directory)
 	if err != nil {
 		return fmt.Errorf("failed to access directory %s: %w", c.Config.Directory, err)

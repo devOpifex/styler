@@ -37,22 +37,27 @@ func Run() {
 		Config:  conf,
 	}
 
-	err = command.properties()
-
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
 	command.build()
 }
 
-func (c Command) build() {
-	err := c.read()
+func (c *Command) build() {
+	err := c.properties()
 
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
+	err = c.read()
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	c.parse()
+
+	for _, str := range c.Strings {
+		fmt.Println(str)
+	}
 }

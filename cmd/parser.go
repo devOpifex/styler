@@ -6,7 +6,7 @@ import (
 
 var pat = regexp.MustCompile("['\"`](.*?)['\"`]")
 
-func (c Command) parse() {
+func (c *Command) parse() {
 	for _, file := range c.Files {
 		matches := pat.FindAllStringSubmatch(file, -1)
 		for _, match := range matches {
