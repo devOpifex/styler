@@ -14,11 +14,16 @@ import (
 var url = "https://www.w3.org/Style/CSS/all-properties.en.html"
 
 func main() {
-	strs, err := Scrape()
+	mp, err := Scrape()
 
 	if err != nil {
 		log.Fatalf("Error scraping CSS properties: %v", err)
 		return
+	}
+
+	var strs []string
+	for k := range mp {
+		strs = append(strs, k)
 	}
 
 	fmt.Printf("Found %d CSS properties\n", len(strs))
@@ -34,7 +39,7 @@ func main() {
 
 // Scrape fetches the CSS properties table from W3C and extracts the second column
 // which contains the property names
-func Scrape() ([]string, error) {
+func Scrape() (map[string]int, error) {
 	// Make HTTP request
 	resp, err := http.Get(url)
 	if err != nil {
@@ -52,8 +57,7 @@ func Scrape() ([]string, error) {
 		return nil, fmt.Errorf("failed to parse HTML: %w", err)
 	}
 
-	// Store the second <td> content from each row
-	var properties []string
+	properties := make(map[string]int)
 
 	// Find the first table and iterate through its rows
 	doc.Find("table").First().Find("tr").Each(func(i int, row *goquery.Selection) {
@@ -65,7 +69,7 @@ func Scrape() ([]string, error) {
 				// Get text content and trim whitespace
 				text := strings.TrimSpace(secondTd.Text())
 				if text != "" {
-					properties = append(properties, text)
+					properties[text]++
 				}
 			}
 		}
@@ -86,9 +90,4 @@ func scrape() {
 	}
 
 	fmt.Printf("Found %d CSS properties\n", len(properties))
-	for i, prop := range properties {
-		if i < 10 { // Print first 10 for preview
-			fmt.Println(prop)
-		}
-	}
 }
