@@ -12,6 +12,7 @@ type Command struct {
 	Files      []string
 	Strings    []string
 	Properties []string
+	ClassMap   map[string]string
 }
 
 func Run() {
@@ -33,8 +34,9 @@ func Run() {
 	}
 
 	command := Command{
-		Options: opts,
-		Config:  conf,
+		Options:  opts,
+		Config:   conf,
+		ClassMap: make(map[string]string),
 	}
 
 	command.build()
@@ -57,7 +59,9 @@ func (c *Command) build() {
 
 	c.parse()
 
-	for _, str := range c.Strings {
-		fmt.Println(str)
+	c.class()
+
+	for k, v := range c.ClassMap {
+		fmt.Printf(".%v{%v;}", k, v)
 	}
 }
