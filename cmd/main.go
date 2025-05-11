@@ -7,12 +7,13 @@ import (
 )
 
 type Command struct {
-	Options    options.Options
-	Config     options.Config
-	Files      []string
-	Strings    []string
-	Properties []string
-	ClassMap   map[string]string
+	Options       options.Options
+	Config        options.Config
+	Files         []string
+	Strings       []string
+	Properties    []string
+	ClassMap      map[string]string
+	MediaClassMap map[string]string
 }
 
 func Run() {
@@ -34,9 +35,10 @@ func Run() {
 	}
 
 	command := Command{
-		Options:  opts,
-		Config:   conf,
-		ClassMap: make(map[string]string),
+		Options:       opts,
+		Config:        conf,
+		ClassMap:      make(map[string]string),
+		MediaClassMap: make(map[string]string),
 	}
 
 	command.build()
@@ -58,10 +60,6 @@ func (c *Command) build() {
 	}
 
 	c.parse()
-
 	c.class()
-
-	for k, v := range c.ClassMap {
-		fmt.Printf(".%v{%v;}", k, v)
-	}
+	c.css()
 }

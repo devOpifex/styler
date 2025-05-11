@@ -1,14 +1,30 @@
 package cmd
 
-import "strings"
+import (
+	"regexp"
+	"strings"
+)
+
+var mediaRegex = regexp.MustCompile("^.*@")
+var prefixRegex = regexp.MustCompile("^.*:")
 
 func (c *Command) class() {
 	for _, str := range c.Strings {
-		c.ClassMap[str] = makeProperty(str)
+		t := classType(str)
+
+		if t == "media" {
+			c.MediaClassMap[c.makeClassName(str)] = makeProperty(str)
+			continue
+		}
+
+		c.ClassMap[c.makeClassName(str)] = makeProperty(str)
 	}
 }
 
 func makeProperty(str string) string {
+	str = mediaRegex.ReplaceAllString(str, "")
+	str = prefixRegex.ReplaceAllString(str, "")
+
 	last := strings.LastIndex(str, "-")
 
 	if last == -1 {
@@ -16,4 +32,39 @@ func makeProperty(str string) string {
 	}
 
 	return str[:last] + ":" + str[last+1:]
+}
+
+func classType(str string) string {
+	if strings.Contains(str, ":") {
+		return "prefix"
+	}
+
+	if strings.Contains(str, "@") {
+		return "media"
+	}
+
+	return "normal"
+}
+
+func (c *Command) makeClassName(str string) string {
+	t := classType(str)
+
+	switch t {
+	case "prefix":
+		return c.makePrefix(str)
+	case "media":
+		return c.makeMedia(str)
+	default:
+		return str
+	}
+}
+
+func (c *Command) makeMedia(str string) string {
+	strs := strings.Split(str, "@")
+	return strs[0] + "\\@" + strs[1] + strs[0]
+}
+
+func (c *Command) makePrefix(str string) string {
+	strs := strings.Split(str, ":")
+	return strs[0] + "\\:" + strs[1] + ":" + strs[0]
 }

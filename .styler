@@ -1,5 +1,27 @@
 {
-    "Pattern": "*.r|*.js|*.html",
-    "Directory": "test",
-    "Output": "style.min.css"
+    "pattern": "*.r|*.js|*.html",
+    "directory": "test",
+    "output": "style.min.css",
+    "media": [
+        {
+            "maxWidth": "",
+            "minWidth": "640px",
+            "name": "sm"
+        },
+        {
+            "maxWidth": "",
+            "minWidth": "768px",
+            "name": "md"
+        },
+        {
+            "maxWidth": "",
+            "minWidth": "1024px",
+            "name": "lg"
+        },
+        {
+            "maxWidth": "",
+            "minWidth": "1280px",
+            "name": "xl"
+        }
+    ]
 }

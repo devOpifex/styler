@@ -8,10 +8,17 @@ import (
 
 var configPath string = ".styler"
 
+type Media struct {
+	MaxWidth string `json:"maxWidth"`
+	MinWidth string `json:"minWidth"`
+	Name     string `json:"name"`
+}
+
 type Config struct {
-	Pattern   string
-	Directory string
-	Output    string
+	Pattern   string  `json:"pattern"`
+	Directory string  `json:"directory"`
+	Output    string  `json:"output"`
+	Media     []Media `json:"media"`
 }
 
 func new() Config {
@@ -19,6 +26,24 @@ func new() Config {
 		Pattern:   "*.r|*.js|*.html",
 		Directory: ".",
 		Output:    "style.min.css",
+		Media: []Media{
+			{
+				MinWidth: "640px",
+				Name:     "sm",
+			},
+			{
+				MinWidth: "768px",
+				Name:     "md",
+			},
+			{
+				MinWidth: "1024px",
+				Name:     "lg",
+			},
+			{
+				MinWidth: "1280px",
+				Name:     "xl",
+			},
+		},
 	}
 }
 
