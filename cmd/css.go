@@ -9,6 +9,10 @@ func (c *Command) css() {
 	var css string
 
 	for media, m := range c.MediaMaps {
+		if len(m) == 0 {
+			continue
+		}
+
 		css += c.mediaProperty(media)
 		for k, v := range m {
 			css += "." + k + "{" + v + "}"

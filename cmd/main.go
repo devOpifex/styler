@@ -70,4 +70,5 @@ func (c *Command) build() {
 	c.parse()
 	c.class()
 	c.css()
+	c.verbose()
 }

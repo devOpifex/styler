@@ -1,7 +1,7 @@
 {
     "pattern": "*.r|*.js|*.html",
     "directory": "test",
-    "output": "style.min.css",
+    "output": "test/style.min.css",
     "media": [
         {
             "maxWidth": "",

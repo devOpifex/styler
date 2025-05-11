@@ -1,6 +1,7 @@
 library(shiny)
 
 ui <- fluidPage(
+  includeCSS("style.min.css"),
   div(
     class = "display-flex padding-2 margin-bottom-2 width-40",
     div(
@@ -13,3 +14,7 @@ ui <- fluidPage(
     )
   )
 )
+
+server <- \(input, output, session){}
+
+shinyApp(ui, server)
