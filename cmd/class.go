@@ -52,7 +52,7 @@ func (c *Command) makeMediaClass(str string) {
 	_, ok := c.MediaMaps[strs[0]]
 
 	if !ok {
-		fmt.Println(strs[0] + " media not found")
+		fmt.Println(strs[0] + " media not found in config")
 		return
 	}
 
