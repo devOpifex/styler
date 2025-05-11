@@ -6,14 +6,16 @@ import (
 	"github.com/devOpifex/styler/options"
 )
 
+type mediaMap map[string]string
+
 type Command struct {
-	Options       options.Options
-	Config        options.Config
-	Files         []string
-	Strings       []string
-	Properties    []string
-	ClassMap      map[string]string
-	MediaClassMap map[string]string
+	Options    options.Options
+	Config     options.Config
+	Files      []string
+	Strings    []string
+	Properties []string
+	ClassMap   map[string]string
+	MediaMaps  map[string]mediaMap
 }
 
 func Run() {
@@ -34,11 +36,17 @@ func Run() {
 		return
 	}
 
+	mediaMaps := make(map[string]mediaMap)
+
+	for _, m := range conf.Media {
+		mediaMaps[m.Name] = make(map[string]string)
+	}
+
 	command := Command{
-		Options:       opts,
-		Config:        conf,
-		ClassMap:      make(map[string]string),
-		MediaClassMap: make(map[string]string),
+		Options:   opts,
+		Config:    conf,
+		ClassMap:  make(map[string]string),
+		MediaMaps: mediaMaps,
 	}
 
 	command.build()

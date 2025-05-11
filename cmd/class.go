@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 )
@@ -13,7 +14,7 @@ func (c *Command) class() {
 		t := classType(str)
 
 		if t == "media" {
-			c.MediaClassMap[c.makeClassName(str)] = makeProperty(str)
+			c.makeMediaClass(str)
 			continue
 		}
 
@@ -46,25 +47,36 @@ func classType(str string) string {
 	return "normal"
 }
 
+func (c *Command) makeMediaClass(str string) {
+	strs := strings.Split(str, "@")
+	_, ok := c.MediaMaps[strs[0]]
+
+	if !ok {
+		fmt.Println(strs[0] + " media not found")
+		return
+	}
+
+	c.MediaMaps[strs[0]][c.makeClassName(str)] = makeProperty(str)
+}
+
 func (c *Command) makeClassName(str string) string {
 	t := classType(str)
 
 	switch t {
 	case "prefix":
-		return c.makePrefix(str)
+		return c.makeClassNamePrefix(str)
 	case "media":
-		return c.makeMedia(str)
+		return c.makeClassNameMedia(str)
 	default:
 		return str
 	}
 }
 
-func (c *Command) makeMedia(str string) string {
-	strs := strings.Split(str, "@")
-	return strs[0] + "\\@" + strs[1] + strs[0]
+func (c *Command) makeClassNameMedia(str string) string {
+	return strings.ReplaceAll(str, "@", "\\@")
 }
 
-func (c *Command) makePrefix(str string) string {
+func (c *Command) makeClassNamePrefix(str string) string {
 	strs := strings.Split(str, ":")
 	return strs[0] + "\\:" + strs[1] + ":" + strs[0]
 }
