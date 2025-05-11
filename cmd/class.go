@@ -39,11 +39,35 @@ func (c *Command) makeProperty(str string) string {
 	_, err := fmt.Sscanf(value, "%d", &intValue)
 
 	if err == nil {
+		str, ok := c.makeColor(str)
+		if ok {
+			return str
+		}
 		val := float32(intValue) / float32(c.Config.Divider)
 		return str[:last] + ":" + fmt.Sprintf("%v", val) + c.Config.Unit
 	}
 
 	return str[:last] + ":" + value
+}
+
+func (c *Command) makeColor(str string) (string, bool) {
+	tokens := strings.Split(str, "-")
+
+	if len(tokens) == 1 {
+		return str, false
+	}
+
+	m, ok := c.Config.Colors[tokens[len(tokens)-2]]
+
+	if !ok {
+		return str, false
+	}
+
+	color := m[tokens[len(tokens)-1]]
+
+	attr := strings.Join(tokens[:len(tokens)-2], "-")
+
+	return attr + ":" + color, true
 }
 
 func classType(str string) string {
