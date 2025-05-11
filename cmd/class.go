@@ -39,6 +39,7 @@ func (c *Command) makeProperty(str string) string {
 	_, err := fmt.Sscanf(value, "%d", &intValue)
 
 	if err == nil {
+		// it ends in a number it may be a color, e.g.: color-red-400
 		str, ok := c.makeColor(str)
 		if ok {
 			return str
