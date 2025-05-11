@@ -22,8 +22,7 @@ styler -create
 
 ## Usage
 
-First, edit `.styler` config file.
-Then, add a `class` attribute to your HTML elements.
+First, edit `.styler` config file, then add a `class` attribute to your HTML elements.
 
 ```r
 ui <- fluidPage(
