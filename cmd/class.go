@@ -18,11 +18,12 @@ func (c *Command) class() {
 			continue
 		}
 
-		c.ClassMap[c.makeClassName(str)] = makeProperty(str)
+		c.ClassMap[c.makeClassName(str)] = c.makeProperty(str)
 	}
 }
 
-func makeProperty(str string) string {
+func (c *Command) makeProperty(str string) string {
+	// remove media and prefix from attribute
 	str = mediaRegex.ReplaceAllString(str, "")
 	str = prefixRegex.ReplaceAllString(str, "")
 
@@ -32,7 +33,17 @@ func makeProperty(str string) string {
 		return str
 	}
 
-	return str[:last] + ":" + str[last+1:]
+	value := str[last+1:]
+
+	var intValue int
+	_, err := fmt.Sscanf(value, "%d", &intValue)
+
+	if err == nil {
+		val := float32(intValue) / float32(c.Config.Divider)
+		return str[:last] + ":" + fmt.Sprintf("%v", val) + c.Config.Unit
+	}
+
+	return str[:last] + ":" + value
 }
 
 func classType(str string) string {
@@ -56,7 +67,7 @@ func (c *Command) makeMediaClass(str string) {
 		return
 	}
 
-	c.MediaMaps[strs[0]][c.makeClassName(str)] = makeProperty(str)
+	c.MediaMaps[strs[0]][c.makeClassName(str)] = c.makeProperty(str)
 }
 
 func (c *Command) makeClassName(str string) string {
