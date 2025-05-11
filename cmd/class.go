@@ -1,0 +1,118 @@
+package cmd
+
+import (
+	"fmt"
+	"regexp"
+	"strings"
+)
+
+var mediaRegex = regexp.MustCompile("^.*@")
+var prefixRegex = regexp.MustCompile("^.*:")
+
+func (c *Command) class() {
+	for _, str := range c.Strings {
+		t := classType(str)
+
+		if t == "media" {
+			c.makeMediaClass(str)
+			continue
+		}
+
+		c.ClassMap[c.makeClassName(str)] = c.makeProperty(str)
+	}
+}
+
+func (c *Command) makeProperty(str string) string {
+	// remove media and prefix from attribute
+	str = mediaRegex.ReplaceAllString(str, "")
+	str = prefixRegex.ReplaceAllString(str, "")
+
+	last := strings.LastIndex(str, "-")
+
+	if last == -1 {
+		return str
+	}
+
+	value := str[last+1:]
+
+	var intValue int
+	_, err := fmt.Sscanf(value, "%d", &intValue)
+
+	if err == nil {
+		// it ends in a number it may be a color, e.g.: color-red-400
+		str, ok := c.makeColor(str)
+		if ok {
+			return str
+		}
+		val := float32(intValue) / float32(c.Config.Divider)
+		return str[:last] + ":" + fmt.Sprintf("%v", val) + c.Config.Unit
+	}
+
+	return str[:last] + ":" + value
+}
+
+func (c *Command) makeColor(str string) (string, bool) {
+	tokens := strings.Split(str, "-")
+
+	if len(tokens) == 1 {
+		return str, false
+	}
+
+	m, ok := c.Config.Colors[tokens[len(tokens)-2]]
+
+	if !ok {
+		return str, false
+	}
+
+	color := m[tokens[len(tokens)-1]]
+
+	attr := strings.Join(tokens[:len(tokens)-2], "-")
+
+	return attr + ":" + color, true
+}
+
+func classType(str string) string {
+	if strings.Contains(str, ":") {
+		return "prefix"
+	}
+
+	if strings.Contains(str, "@") {
+		return "media"
+	}
+
+	return "normal"
+}
+
+func (c *Command) makeMediaClass(str string) {
+	strs := strings.Split(str, "@")
+	_, ok := c.MediaMaps[strs[0]]
+
+	if !ok {
+		fmt.Printf("%v media not found in .styler", strs[0])
+		return
+	}
+
+	c.MediaMaps[strs[0]][c.makeClassName(str)] = c.makeProperty(str)
+}
+
+func (c *Command) makeClassName(str string) string {
+	t := classType(str)
+
+	switch t {
+	case "prefix":
+		return c.makeClassNamePrefix(str)
+	case "media":
+		return c.makeClassNameMedia(str)
+	default:
+		return str
+	}
+}
+
+func (c *Command) makeClassNameMedia(str string) string {
+	return strings.ReplaceAll(str, "@", "\\@")
+}
+
+func (c *Command) makeClassNamePrefix(str string) string {
+	strs := strings.Split(str, ":")
+	return strs[0] + "\\:" + strs[1] + ":" + strs[0]
+}

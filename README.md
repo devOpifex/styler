@@ -2,75 +2,48 @@
 
 Tool to generate CSS classes, a bit like tailwind but less strict.
 
-For cases where we cannot use tailwind because of whatever
-constraints, e.g.: using Shiny forcing Bootstrap.
-
-Styler will scan for `class=""`.
-
-```html
-<!--src/file.html-->
-<div class="margin-2 sm:margin-0 border-radius-2 border-red-100 border-width-1 position-relative">
-    <h1 class="hover:font-bold text-red-400">Hello</h1>
-</div>
-```
-
-```bash
-styler -dir=src -output=styles.css -verbose=false
-```
-
-or 
-
-```bash
-styler -file=src/file.html -output=styles.css -verbose=false
-```
-
 ## Install
 
 ```bash
 go install github.com/devOpifex/styler@latest
 ```
 
-## Shorthands
+## Setup
 
-You don't have to use the shorthands, 
-e.g.: `d-f` and `display-flex` are both correct.
-They simply translate to something else in the generated
-CSS.
+Create a `.styler` file in your project root.
 
-- `b`: `bottom`
-- `t`: `top`
-- `c`: `color`
-- `s`: `size`
-- `r`: `radius`
-- `m`: `margin`
-- `p`: `padding`
-- `w`: `width`
-- `f`: `flex`
-- `a`: `align`
-- `j`: `justify`
-- `i`: `items`
-- `bk`: `background` (bg taken in many frameworks)
-- `d`: `display`
-- `pos`: `position`
-- `rel`: `relative`
-- `abs`: `absolute`
-- `full`: `100%`
-- `ov`: `overflow`
-- `sh`: `shadow`
-- `text`: `font`
+```bash
+styler -create
+```
 
-## Details
+## Usage
 
-- Special case for shadow takes `sm`, `md`, or `lg` suffixes.
-- Support for `x`, `y`, `t`, and `b`, e.g.: `p-x-2`
-- Tailwind's `hover:`, and `focus:` pseudo classes
-- All tailwind's colors included, e.g.: `t-red-100`
-- The last item in the string of attributes separated by `-` is the value, 
-e.g.: `background-color-red` translates to `background-color:red;`
-- Numeric values are divided by 4 and treated as `rem`, e.g.: `border-r-2` translates
-to `border-radius:.25rem`, except for values `50` and `100` which are
-treated as percentages.
-You can prevent that by prefixing a number with `~` in which case it is treated as
-"strict," e.g.: `border-w-~0.1` leads to `border-width:0.1rem`;
-- Support for responsive `sm:`, `md:`, `lg:`, `xl:`, and `2xl:` prefixes.
+Add a `class` attribute to your HTML elements.
 
+```r
+ui <- fluidPage(
+  div(
+    class = "display-flex padding-2 margin-bottom-2 width-40",
+    div(
+      class = "flex-grow-1",
+      h1("Hello, world!", class = "color-red-400 hover:color-cyan-500")
+    ),
+    div(
+      class = "flex-shrink-1 md@display-none",
+      h2("This is hidden on medium and larger screens", class = "color-blue hover:color-green")
+    )
+  )
+)
+```
+
+Call `styler` to generate the CSS.
+
+```bash
+styler
+```
+
+- Media queries are suffixed with `@` and prefixed with `md@`, `lg@` etc.
+- States are suffixed with `:` and prefixed with `hover:`, `active:` etc.
+- Numeric values are set as `unit` specified in the config. defaults to `rem`
+and are divided by the `divider` specified in the config (`4` by default), 
+e.g.: `padding-top-2` will result in `padding-top: 0.5rem`
