@@ -22,7 +22,8 @@ styler -create
 
 ## Usage
 
-Add a `class` attribute to your HTML elements.
+First, edit `.styler` config file.
+Then, add a `class` attribute to your HTML elements.
 
 ```r
 ui <- fluidPage(
@@ -48,6 +49,8 @@ styler
 
 - Media queries are suffixed with `@` and prefixed with `md@`, `lg@` etc.
 - States are suffixed with `:` and prefixed with `hover:`, `active:` etc.
-- Numeric values are set as `unit` specified in the config. defaults to `rem`
-and are divided by the `divider` specified in the config (`4` by default), 
+- Numeric values are set as `unit` specified in the config (defaults to `rem`)
+and are divided by the `divider` specified in the config (defaults to `4`), 
 e.g.: `padding-top-2` will result in `padding-top: 0.5rem`
+- Media queries can be edited in `.styler` config file
+- Colors can be edited in `.styler` config file
