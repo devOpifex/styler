@@ -4,9 +4,13 @@ Tool to generate CSS classes, a bit like tailwind but less strict.
 
 ## Install
 
+If you have Go installed, you can install styler with:
+
 ```bash
 go install github.com/devOpifex/styler@latest
 ```
+
+Otherwise, you can download the binary from the [releases](https://github.com/devOpifex/styler/releases) page.
 
 ## Setup
 
