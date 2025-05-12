@@ -19,10 +19,7 @@ type Command struct {
 }
 
 func Run() {
-	opts, ok := options.Run()
-	if !ok {
-		return
-	}
+	opts := options.Run()
 
 	if opts.Create {
 		options.Create()
