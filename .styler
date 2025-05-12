@@ -1,4 +1,5 @@
 {
+    "version": "0.0.1",
     "pattern": "*.r|*.js|*.html",
     "directory": "test",
     "output": "test/style.min.css",

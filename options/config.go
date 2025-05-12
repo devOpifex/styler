@@ -377,5 +377,24 @@ func Read() (Config, error) {
 		return conf, err
 	}
 
+	conf.check()
+
 	return conf, nil
+}
+
+func (c *Config) check() {
+	if c.Version == "" {
+		fmt.Println("Config file is outdated. Please update it with: style -create")
+		return
+	}
+
+	if c.Version != version {
+		fmt.Printf(
+			"Config version (%v) is not the same as the current version (%v).\n",
+			c.Version,
+			version,
+		)
+		fmt.Printf("If you encounter errors, please update the config file with: style -create\n")
+		return
+	}
 }

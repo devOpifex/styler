@@ -9,8 +9,11 @@ ui <- fluidPage(
       h1("Hello, world!", class = "color-red-400 hover:color-cyan-500")
     ),
     div(
-      class = "flex-shrink-1 sm@display-none",
-      h2("Hello, world!", class = "color-blue hover:color-green")
+      class = "flex-shrink-1 md@display-none",
+      h2(
+        "This is hidden on medium screens and larger",
+        class = "color-blue hover:color-green"
+      )
     )
   )
 )
