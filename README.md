@@ -53,3 +53,4 @@ and are divided by the `divider` specified in the config (defaults to `4`),
 e.g.: `padding-top-2` will result in `padding-top: 0.5rem`
 - Media queries can be edited in `.styler` config file
 - Colors can be edited in `.styler` config file
+- Extracted CSS properties are checked against the [W3C CSS Properties](https://www.w3.org/Style/CSS/all-properties.en.html) table
