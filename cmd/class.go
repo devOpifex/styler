@@ -18,8 +18,24 @@ func (c *Command) class() {
 			continue
 		}
 
-		c.ClassMap[c.makeClassName(str)] = c.makeProperty(str)
+		p := c.makeProperty(str)
+
+		if !c.checkProperty(p) {
+			continue
+		}
+
+		c.ClassMap[c.makeClassName(str)] = p
 	}
+}
+
+func (c *Command) checkProperty(str string) bool {
+	property := strings.Split(str, ":")
+	for _, p := range c.Properties {
+		if p == property[0] {
+			return true
+		}
+	}
+	return false
 }
 
 func (c *Command) makeProperty(str string) string {
@@ -92,7 +108,13 @@ func (c *Command) makeMediaClass(str string) {
 		return
 	}
 
-	c.MediaMaps[strs[0]][c.makeClassName(str)] = c.makeProperty(str)
+	p := c.makeProperty(str)
+
+	if !c.checkProperty(p) {
+		return
+	}
+
+	c.MediaMaps[strs[0]][c.makeClassName(str)] = p
 }
 
 func (c *Command) makeClassName(str string) string {

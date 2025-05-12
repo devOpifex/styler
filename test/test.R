@@ -11,7 +11,7 @@ ui <- fluidPage(
     div(
       class = "flex-shrink-1 md@display-none",
       h2(
-        "This is hidden on medium screens and larger",
+        "This is hidden on medium screens and larger hello-world",
         class = "color-blue hover:color-green"
       )
     )

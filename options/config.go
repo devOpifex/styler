@@ -8,7 +8,7 @@ import (
 
 const configPath = ".styler"
 
-const version = "0.0.1"
+const version = "0.0.2"
 
 type Media struct {
 	MaxWidth string `json:"maxWidth"`
