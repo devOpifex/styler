@@ -384,13 +384,13 @@ func Read() (Config, error) {
 
 func (c *Config) check() {
 	if c.Version == "" {
-		fmt.Println("Config file is outdated. Please update it with: style -create")
+		fmt.Println("[WARNING] Config file is outdated. Please update it with: style -create")
 		return
 	}
 
 	if c.Version != version {
 		fmt.Printf(
-			"Config version (%v) is not the same as the current version (%v).\n",
+			"[WARNING] Config version (%v) is not the same as the current version (%v).\n",
 			c.Version,
 			version,
 		)
