@@ -45,8 +45,6 @@ func getCSS(this js.Value, args []js.Value) interface{} {
 		return js.ValueOf("")
 	}
 
-	fmt.Printf("Processing HTML: %v\n", str)
-
 	// Create config
 	conf := options.New()
 
@@ -82,17 +80,12 @@ func getCSS(this js.Value, args []js.Value) interface{} {
 			}
 		}()
 
-		fmt.Println("Parsing HTML...")
 		command.Parse()
-
-		fmt.Println("Processing classes...")
-		fmt.Printf("Found %d classes\n", len(command.Strings))
 
 		// Try using the standard Class() method
 		command.Class()
 
-		fmt.Println("Generating CSS...")
-		command.Css()
+		command.Css(true)
 	}()
 
 	if command.CSS == "" {
@@ -100,6 +93,5 @@ func getCSS(this js.Value, args []js.Value) interface{} {
 		return js.ValueOf("")
 	}
 
-	fmt.Println("CSS generated successfully")
 	return js.ValueOf(command.CSS)
 }

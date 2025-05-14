@@ -63,7 +63,7 @@ func Run() {
 
 	command.Parse()
 	command.Class()
-	command.Css()
+	command.Css(false)
 
 	command.write()
 	command.verbose()

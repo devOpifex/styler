@@ -1,18 +1,73 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <meta charset="utf-8" />
     <title>Styler - CSS Class Generator</title>
     <script src="static/wasm_exec.js"></script>
+    <!-- CodeMirror CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/theme/dracula.min.css"
+    />
+    <!-- CodeMirror JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.5/addon/display/autorefresh.min.js"></script>
     <style>
       * {
         box-sizing: border-box;
       }
       body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
         margin: 0;
         padding: 20px;
         line-height: 1.4;
+        background-color: #f7f9fc;
+      }
+      .github-corner {
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 100;
+      }
+      .github-corner svg {
+        fill: #151513;
+        color: #fff;
+        width: 80px;
+        height: 80px;
+      }
+      .github-corner:hover .octo-arm {
+        animation: octocat-wave 560ms ease-in-out;
+      }
+      @keyframes octocat-wave {
+        0%,
+        100% {
+          transform: rotate(0);
+        }
+        20%,
+        60% {
+          transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+          transform: rotate(10deg);
+        }
+      }
+      @media (max-width: 500px) {
+        .github-corner:hover .octo-arm {
+          animation: none;
+        }
+        .github-corner .octo-arm {
+          animation: octocat-wave 560ms ease-in-out;
+        }
       }
       h1 {
         color: #333;
@@ -28,36 +83,41 @@
       .editor-container {
         display: flex;
         gap: 20px;
-        min-height: 400px;
+        min-height: 500px;
       }
-      .editor-panel, .preview-panel {
+      @media (max-width: 768px) {
+        .editor-container {
+          flex-direction: column;
+        }
+      }
+      .editor-panel,
+      .preview-panel {
         flex: 1;
         border: 1px solid #ccc;
-        border-radius: 4px;
-        padding: 10px;
+        border-radius: 8px;
+        padding: 0;
+        overflow: hidden;
+        background-color: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
       }
       .editor-panel {
         display: flex;
         flex-direction: column;
       }
-      .editor-panel textarea {
-        flex: 1;
-        padding: 10px;
-        font-family: monospace;
+      .CodeMirror {
+        height: 100%;
         font-size: 14px;
-        border: none;
-        resize: none;
-        outline: none;
       }
       .preview-panel {
         display: flex;
         flex-direction: column;
       }
-      .preview-header {
-        margin-bottom: 10px;
-        padding-bottom: 10px;
+      .panel-header {
+        margin: 0;
+        padding: 12px 15px;
         border-bottom: 1px solid #eee;
         font-weight: bold;
+        background-color: #f9f9f9;
       }
       iframe {
         flex: 1;
@@ -67,34 +127,46 @@
       }
       .css-output {
         flex: 1;
-        margin-top: 20px;
+        margin-top: 0;
         border: 1px solid #ccc;
-        border-radius: 4px;
-        padding: 10px;
+        border-radius: 8px;
+        padding: 0;
+        background-color: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
       }
-      .css-output pre {
-        padding: 10px;
-        background: #f5f5f5;
-        border-radius: 4px;
-        overflow: auto;
-        margin: 0;
-        font-family: monospace;
+      .css-output .CodeMirror {
+        height: 200px;
         font-size: 14px;
+        background: #f5f5f5;
+      }
+      .github-link {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 14px;
+      }
+      .github-link a {
+        color: #0366d6;
+        text-decoration: none;
+      }
+      .github-link a:hover {
+        text-decoration: underline;
       }
     </style>
     <script>
       const go = new Go(); // Defined in wasm_exec.js
       const WASM_URL = "static/main.wasm";
       var wasm;
+      var editor;
 
       // Function to update the preview iframe
       function updatePreview(html, css) {
-        const iframe = document.getElementById('preview-frame');
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-        
+        const iframe = document.getElementById("preview-frame");
+        const iframeDoc =
+          iframe.contentDocument || iframe.contentWindow.document;
+
         // Clear the previous content
         iframeDoc.open();
-        
+
         // Write new content with the generated CSS
         iframeDoc.write(`
           <!DOCTYPE html>
@@ -105,77 +177,139 @@
             <body>${html}</body>
           </html>
         `);
-        
+
         iframeDoc.close();
-        
-        // Also update the CSS display
-        document.getElementById('css-output').textContent = css;
+
+        // Initialize or update the CSS editor
+        if (!window.cssEditor) {
+          const cssContainer = document.getElementById("css-output-editor");
+          window.cssEditor = CodeMirror(cssContainer, {
+            value: css,
+            mode: "css",
+            theme: "dracula",
+            lineNumbers: true,
+            readOnly: true,
+            autoRefresh: true,
+          });
+        } else {
+          window.cssEditor.setValue(css);
+        }
       }
 
       function handler(obj) {
         wasm = obj.instance;
         go.run(wasm);
-        
+
+        // Initialize CodeMirror
+        const initialHtml = `<div class="color-slate-700 margin-4 padding-4 background-gray-100 border-radius-4">
+  <h1 class="font-weight-bold color-cyam-400">Styler Demo</h1>
+  <p class="font-size-4 margin-bottom-2">
+    This is a utility-first CSS library that generates CSS from your HTML classes.
+  </p>
+  <div class="display-flex md@display-block">
+    <div class="background-blue-200 padding-2 margin-right-2 border-radius-2">Box 1</div>
+    <div class="background-green-200 padding-2 margin-right-2 border-radius-2">Box 2</div>
+    <div class="background-yellow-200 padding-2 border-radius-2">Box 3</div>
+  </div>
+</div>`;
+
+        editor = CodeMirror(document.getElementById("editor"), {
+          value: initialHtml,
+          mode: "htmlmixed",
+          theme: "dracula",
+          lineNumbers: true,
+          indentUnit: 2,
+          smartIndent: true,
+          tabSize: 2,
+          indentWithTabs: false,
+          lineWrapping: true,
+          autoCloseTags: true,
+          autoCloseBrackets: true,
+          matchBrackets: true,
+          matchTags: { bothTags: true },
+        });
+
         // Setup editor with debounce
         let timeout;
-        const editor = document.getElementById("html-editor");
-        
+
         function processInput() {
-          const html = editor.value;
+          const html = editor.getValue();
           const css = goGetCSS(html);
           updatePreview(html, css);
         }
-        
-        editor.addEventListener("input", function() {
+
+        editor.on("change", function () {
           clearTimeout(timeout);
           timeout = setTimeout(processInput, 300); // 300ms debounce
         });
-        
+
         // Initial render
         processInput();
       }
 
       // Initialize WASM
-      if ("instantiateStreaming" in WebAssembly) {
-        WebAssembly.instantiateStreaming(fetch(WASM_URL), go.importObject).then(handler);
-      } else {
-        fetch(WASM_URL)
-          .then((resp) => resp.arrayBuffer())
-          .then((bytes) => WebAssembly.instantiate(bytes, go.importObject).then(handler));
-      }
+      document.addEventListener("DOMContentLoaded", function () {
+        if ("instantiateStreaming" in WebAssembly) {
+          WebAssembly.instantiateStreaming(
+            fetch(WASM_URL),
+            go.importObject,
+          ).then(handler);
+        } else {
+          fetch(WASM_URL)
+            .then((resp) => resp.arrayBuffer())
+            .then((bytes) =>
+              WebAssembly.instantiate(bytes, go.importObject).then(handler),
+            );
+        }
+      });
     </script>
   </head>
   <body>
+    <a
+      target="_blank"
+      href="https://github.com/devOpifex/styler"
+      class="github-corner"
+      aria-label="View source on GitHub"
+    >
+      <svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path
+          d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+          fill="currentColor"
+          style="transform-origin: 130px 106px"
+          class="octo-arm"
+        ></path>
+        <path
+          d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+          fill="currentColor"
+          class="octo-body"
+        ></path>
+      </svg>
+    </a>
     <div class="container">
       <h1>Styler - CSS Class Generator</h1>
-      
+
       <div class="editor-container">
         <div class="editor-panel">
-          <div class="preview-header">HTML Editor</div>
-          <textarea id="html-editor" spellcheck="false">
-<div class="color-slate-700 margin-4 padding-4 bg-gray-100 border-radius-4">
-  <h1 class="font-weight-bold color-red-600">Styler Demo</h1>
-  <p class="font-size-16 margin-bottom-2">
-    This is a utility-first CSS library that generates CSS from your HTML classes.
-  </p>
-  <div class="display-flex">
-    <div class="bg-blue-200 padding-2 margin-right-2">Box 1</div>
-    <div class="bg-green-200 padding-2 margin-right-2">Box 2</div>
-    <div class="bg-yellow-200 padding-2">Box 3</div>
-  </div>
-</div>
-          </textarea>
+          <div class="panel-header">HTML Editor</div>
+          <div id="editor"></div>
         </div>
-        
+
         <div class="preview-panel">
-          <div class="preview-header">Preview</div>
+          <div class="panel-header">Live Preview</div>
           <iframe id="preview-frame"></iframe>
         </div>
       </div>
-      
+
       <div class="css-output">
-        <div class="preview-header">Generated CSS</div>
-        <pre id="css-output"></pre>
+        <div class="panel-header">Generated CSS</div>
+        <div id="css-output-editor"></div>
+      </div>
+
+      <div class="github-link">
+        <a href="https://github.com/devOpifex/styler" target="_blank"
+          >View project on GitHub</a
+        >
       </div>
     </div>
   </body>

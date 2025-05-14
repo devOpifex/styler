@@ -326,7 +326,7 @@ func New() Config {
 		Divider:   4,
 		Media: []Media{
 			{
-				MinWidth: "640px",
+				MinWidth: "576px",
 				Name:     "sm",
 			},
 			{
@@ -334,12 +334,16 @@ func New() Config {
 				Name:     "md",
 			},
 			{
-				MinWidth: "1024px",
+				MinWidth: "992px",
 				Name:     "lg",
 			},
 			{
-				MinWidth: "1280px",
+				MinWidth: "1200px",
 				Name:     "xl",
+			},
+			{
+				MinWidth: "1400px",
+				Name:     "xxl",
 			},
 		},
 		Colors: colors,
