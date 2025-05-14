@@ -9,7 +9,7 @@ import (
 var mediaRegex = regexp.MustCompile("^.*@")
 var prefixRegex = regexp.MustCompile("^.*:")
 
-func (c *Command) class() {
+func (c *Command) Class() {
 	for _, str := range c.Strings {
 		t := classType(str)
 
@@ -29,7 +29,15 @@ func (c *Command) class() {
 }
 
 func (c *Command) checkProperty(str string) bool {
+	if len(c.Properties) == 0 {
+		return true
+	}
+
 	property := strings.Split(str, ":")
+	if len(property) == 0 {
+		return false
+	}
+
 	for _, p := range c.Properties {
 		if p == property[0] {
 			return true
@@ -70,7 +78,7 @@ func (c *Command) makeProperty(str string) string {
 func (c *Command) makeColor(str string) (string, bool) {
 	tokens := strings.Split(str, "-")
 
-	if len(tokens) == 1 {
+	if len(tokens) < 3 {
 		return str, false
 	}
 
@@ -80,11 +88,12 @@ func (c *Command) makeColor(str string) (string, bool) {
 		return str, false
 	}
 
-	color := m[tokens[len(tokens)-1]]
+	if color, exists := m[tokens[len(tokens)-1]]; exists {
+		attr := strings.Join(tokens[:len(tokens)-2], "-")
+		return attr + ":" + color, true
+	}
 
-	attr := strings.Join(tokens[:len(tokens)-2], "-")
-
-	return attr + ":" + color, true
+	return str, false
 }
 
 func classType(str string) string {
@@ -101,6 +110,10 @@ func classType(str string) string {
 
 func (c *Command) makeMediaClass(str string) {
 	strs := strings.Split(str, "@")
+	if len(strs) == 0 {
+		return
+	}
+
 	_, ok := c.MediaMaps[strs[0]]
 
 	if !ok {
@@ -136,5 +149,8 @@ func (c *Command) makeClassNameMedia(str string) string {
 
 func (c *Command) makeClassNamePrefix(str string) string {
 	strs := strings.Split(str, ":")
+	if len(strs) < 2 {
+		return str
+	}
 	return strs[0] + "\\:" + strs[1] + ":" + strs[0]
 }

@@ -6,7 +6,7 @@ import (
 	"github.com/devOpifex/styler/options"
 )
 
-type mediaMap map[string]string
+type MediaMap map[string]string
 
 type Command struct {
 	Options    options.Options
@@ -15,7 +15,8 @@ type Command struct {
 	Strings    []string
 	Properties []string
 	ClassMap   map[string]string
-	MediaMaps  map[string]mediaMap
+	MediaMaps  map[string]MediaMap
+	CSS        string
 }
 
 func Run() {
@@ -33,7 +34,7 @@ func Run() {
 		return
 	}
 
-	mediaMaps := make(map[string]mediaMap)
+	mediaMaps := make(map[string]MediaMap)
 
 	for _, m := range conf.Media {
 		mediaMaps[m.Name] = make(map[string]string)
@@ -46,26 +47,24 @@ func Run() {
 		MediaMaps: mediaMaps,
 	}
 
-	command.build()
-}
-
-func (c *Command) build() {
-	err := c.properties()
+	err = command.LoadProperties()
 
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	err = c.read()
+	err = command.read()
 
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 
-	c.parse()
-	c.class()
-	c.css()
-	c.verbose()
+	command.Parse()
+	command.Class()
+	command.Css()
+
+	command.write()
+	command.verbose()
 }

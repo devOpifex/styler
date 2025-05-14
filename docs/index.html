@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Styler - CSS Class Generator</title>
+    <script src="static/wasm_exec.js"></script>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        margin: 0;
+        padding: 20px;
+        line-height: 1.4;
+      }
+      h1 {
+        color: #333;
+        margin-bottom: 20px;
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .editor-container {
+        display: flex;
+        gap: 20px;
+        min-height: 400px;
+      }
+      .editor-panel, .preview-panel {
+        flex: 1;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 10px;
+      }
+      .editor-panel {
+        display: flex;
+        flex-direction: column;
+      }
+      .editor-panel textarea {
+        flex: 1;
+        padding: 10px;
+        font-family: monospace;
+        font-size: 14px;
+        border: none;
+        resize: none;
+        outline: none;
+      }
+      .preview-panel {
+        display: flex;
+        flex-direction: column;
+      }
+      .preview-header {
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+        font-weight: bold;
+      }
+      iframe {
+        flex: 1;
+        border: none;
+        width: 100%;
+        background: white;
+      }
+      .css-output {
+        flex: 1;
+        margin-top: 20px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 10px;
+      }
+      .css-output pre {
+        padding: 10px;
+        background: #f5f5f5;
+        border-radius: 4px;
+        overflow: auto;
+        margin: 0;
+        font-family: monospace;
+        font-size: 14px;
+      }
+    </style>
+    <script>
+      const go = new Go(); // Defined in wasm_exec.js
+      const WASM_URL = "static/main.wasm";
+      var wasm;
+
+      // Function to update the preview iframe
+      function updatePreview(html, css) {
+        const iframe = document.getElementById('preview-frame');
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        
+        // Clear the previous content
+        iframeDoc.open();
+        
+        // Write new content with the generated CSS
+        iframeDoc.write(`
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <style>${css}</style>
+            </head>
+            <body>${html}</body>
+          </html>
+        `);
+        
+        iframeDoc.close();
+        
+        // Also update the CSS display
+        document.getElementById('css-output').textContent = css;
+      }
+
+      function handler(obj) {
+        wasm = obj.instance;
+        go.run(wasm);
+        
+        // Setup editor with debounce
+        let timeout;
+        const editor = document.getElementById("html-editor");
+        
+        function processInput() {
+          const html = editor.value;
+          const css = goGetCSS(html);
+          updatePreview(html, css);
+        }
+        
+        editor.addEventListener("input", function() {
+          clearTimeout(timeout);
+          timeout = setTimeout(processInput, 300); // 300ms debounce
+        });
+        
+        // Initial render
+        processInput();
+      }
+
+      // Initialize WASM
+      if ("instantiateStreaming" in WebAssembly) {
+        WebAssembly.instantiateStreaming(fetch(WASM_URL), go.importObject).then(handler);
+      } else {
+        fetch(WASM_URL)
+          .then((resp) => resp.arrayBuffer())
+          .then((bytes) => WebAssembly.instantiate(bytes, go.importObject).then(handler));
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Styler - CSS Class Generator</h1>
+      
+      <div class="editor-container">
+        <div class="editor-panel">
+          <div class="preview-header">HTML Editor</div>
+          <textarea id="html-editor" spellcheck="false">
+<div class="color-slate-700 margin-4 padding-4 bg-gray-100 border-radius-4">
+  <h1 class="font-weight-bold color-red-600">Styler Demo</h1>
+  <p class="font-size-16 margin-bottom-2">
+    This is a utility-first CSS library that generates CSS from your HTML classes.
+  </p>
+  <div class="display-flex">
+    <div class="bg-blue-200 padding-2 margin-right-2">Box 1</div>
+    <div class="bg-green-200 padding-2 margin-right-2">Box 2</div>
+    <div class="bg-yellow-200 padding-2">Box 3</div>
+  </div>
+</div>
+          </textarea>
+        </div>
+        
+        <div class="preview-panel">
+          <div class="preview-header">Preview</div>
+          <iframe id="preview-frame"></iframe>
+        </div>
+      </div>
+      
+      <div class="css-output">
+        <div class="preview-header">Generated CSS</div>
+        <pre id="css-output"></pre>
+      </div>
+    </div>
+  </body>
+</html>

@@ -316,7 +316,7 @@ var colors = map[string]map[string]string{
 	},
 }
 
-func new() Config {
+func New() Config {
 	return Config{
 		Version:   version,
 		Pattern:   "*.r|*.js|*.html",
@@ -352,7 +352,7 @@ func Create() {
 		return
 	}
 
-	conf := new()
+	conf := New()
 	confJson, _ := json.MarshalIndent(conf, "", "    ")
 	err := os.WriteFile(configPath, confJson, 0644)
 

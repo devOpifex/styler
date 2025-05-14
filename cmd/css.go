@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-func (c *Command) css() {
+func (c *Command) Css() {
 	var css string
 
 	for media, m := range c.MediaMaps {
@@ -24,7 +24,11 @@ func (c *Command) css() {
 		css += "." + k + "{" + v + "}"
 	}
 
-	os.WriteFile(c.Config.Output, []byte(css), 0644)
+	c.CSS = css
+}
+
+func (c *Command) write() {
+	os.WriteFile(c.Config.Output, []byte(c.CSS), 0644)
 }
 
 func (c *Command) mediaProperty(name string) string {
@@ -38,7 +42,7 @@ func (c *Command) mediaProperty(name string) string {
 		}
 
 		if m.MaxWidth != "" {
-			return "@media only screen and (max-width: " + m.MinWidth + "){"
+			return "@media only screen and (max-width: " + m.MaxWidth + "){"
 		}
 	}
 
@@ -46,3 +50,4 @@ func (c *Command) mediaProperty(name string) string {
 
 	return ""
 }
+

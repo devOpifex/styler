@@ -8,7 +8,7 @@ import (
 //go:embed properties.json
 var properties []byte
 
-func (c *Command) properties() error {
+func (c *Command) LoadProperties() error {
 	var props []string
 	err := json.Unmarshal(properties, &props)
 	if err != nil {
