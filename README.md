@@ -1,6 +1,7 @@
 # Styler
 
 Tool to generate CSS classes, a bit like tailwind but less strict.
+see [demo](https://devopifex.github.io/styler/)
 
 ## Install
 
