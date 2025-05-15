@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -51,7 +52,12 @@ func (c *Command) makeProperty(str string) string {
 	str = mediaRegex.ReplaceAllString(str, "")
 	str = prefixRegex.ReplaceAllString(str, "")
 
+	strict := false
 	last := strings.LastIndex(str, "-")
+	if strings.Contains(str, "~") {
+		strict = true
+		last = strings.LastIndex(str, "~")
+	}
 
 	if last == -1 {
 		return str
@@ -59,8 +65,7 @@ func (c *Command) makeProperty(str string) string {
 
 	value := str[last+1:]
 
-	var intValue int
-	_, err := fmt.Sscanf(value, "%d", &intValue)
+	intValue, err := strconv.Atoi(value)
 
 	if err == nil {
 		// it ends in a number it may be a color, e.g.: color-red-400
@@ -68,8 +73,17 @@ func (c *Command) makeProperty(str string) string {
 		if ok {
 			return str
 		}
-		val := float32(intValue) / float32(c.Config.Divider)
-		return str[:last] + ":" + fmt.Sprintf("%v", val) + c.Config.Unit
+		val := float32(intValue)
+		if !strict {
+			val = float32(intValue) / float32(c.Config.Divider)
+		}
+
+		property := str[:last] + ":" + fmt.Sprintf("%v", val)
+
+		if strict {
+			return property
+		}
+		return property + c.Config.Unit
 	}
 
 	return str[:last] + ":" + value
@@ -117,7 +131,7 @@ func (c *Command) makeMediaClass(str string) {
 	_, ok := c.MediaMaps[strs[0]]
 
 	if !ok {
-		fmt.Printf("%v media not found in .styler", strs[0])
+		fmt.Printf("%v media not found in .styler\n", strs[0])
 		return
 	}
 
@@ -131,26 +145,9 @@ func (c *Command) makeMediaClass(str string) {
 }
 
 func (c *Command) makeClassName(str string) string {
-	t := classType(str)
-
-	switch t {
-	case "prefix":
-		return c.makeClassNamePrefix(str)
-	case "media":
-		return c.makeClassNameMedia(str)
-	default:
-		return str
-	}
-}
-
-func (c *Command) makeClassNameMedia(str string) string {
-	return strings.ReplaceAll(str, "@", "\\@")
-}
-
-func (c *Command) makeClassNamePrefix(str string) string {
-	strs := strings.Split(str, ":")
-	if len(strs) < 2 {
-		return str
-	}
-	return strs[0] + "\\:" + strs[1] + ":" + strs[0]
+	str = strings.ReplaceAll(str, "@", "\\@")
+	str = strings.ReplaceAll(str, "%", "\\%")
+	str = strings.ReplaceAll(str, ":", "\\:")
+	str = strings.ReplaceAll(str, "~", "\\~")
+	return str
 }

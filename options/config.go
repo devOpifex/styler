@@ -319,7 +319,7 @@ var colors = map[string]map[string]string{
 func New() Config {
 	return Config{
 		Version:   version,
-		Pattern:   "*.r|*.js|*.html",
+		Pattern:   "*.R|*.r|*.js|*.html",
 		Directory: ".",
 		Output:    "style.min.css",
 		Unit:      "rem",

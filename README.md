@@ -46,11 +46,13 @@ Call `styler` to generate the CSS.
 styler
 ```
 
-- Media queries are suffixed with `@` and prefixed with `md@`, `lg@` etc.
-- States are suffixed with `:` and prefixed with `hover:`, `active:` etc.
+- Media queries are suffixed with `@` e.g.: `md@`, `lg@`
+- States are suffixed with `:`, e.g.: `hover:`, `active:`
 - Numeric values are set as `unit` specified in the config (defaults to `rem`)
 and are divided by the `divider` specified in the config (defaults to `4`), 
 e.g.: `padding-top-2` will result in `padding-top: 0.5rem`
+- Numerics precded by `~` are treated as strict and are not divided or suffixed with `unit`
+e.g.: `flex~1` results in `flex: 1`
 - Media queries can be edited in `.styler` config file
 - Colors can be edited in `.styler` config file
 - Extracted CSS properties are checked against the [W3C CSS Properties](https://www.w3.org/Style/CSS/all-properties.en.html) table

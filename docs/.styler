@@ -1,14 +1,14 @@
 {
     "version": "0.0.2",
-    "pattern": "*.R|*.r|*.js|*.html",
-    "directory": "test",
-    "output": "test/style.min.css",
+    "pattern": "*.r|*.js|*.html",
+    "directory": ".",
+    "output": "static/styles.min.css",
     "unit": "rem",
     "divider": 4,
     "media": [
         {
             "maxWidth": "",
-            "minWidth": "640px",
+            "minWidth": "576px",
             "name": "sm"
         },
         {
@@ -18,13 +18,18 @@
         },
         {
             "maxWidth": "",
-            "minWidth": "1024px",
+            "minWidth": "992px",
             "name": "lg"
         },
         {
             "maxWidth": "",
-            "minWidth": "1280px",
+            "minWidth": "1200px",
             "name": "xl"
+        },
+        {
+            "maxWidth": "",
+            "minWidth": "1400px",
+            "name": "xxl"
         }
     ],
     "colors": {
