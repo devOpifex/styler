@@ -8,7 +8,7 @@ import (
 
 const configPath = ".styler"
 
-const version = "0.0.2"
+const Version = "0.0.3"
 
 type Media struct {
 	MaxWidth string `json:"maxWidth"`
@@ -318,7 +318,7 @@ var colors = map[string]map[string]string{
 
 func New() Config {
 	return Config{
-		Version:   version,
+		Version:   Version,
 		Pattern:   "*.R|*.r|*.js|*.html",
 		Directory: ".",
 		Output:    "style.min.css",
@@ -392,11 +392,11 @@ func (c *Config) check() {
 		return
 	}
 
-	if c.Version != version {
+	if c.Version != Version {
 		fmt.Printf(
 			"[WARNING] Config version (%v) is not the same as the current version (%v).\n",
 			c.Version,
-			version,
+			Version,
 		)
 		fmt.Printf("If you encounter errors, please update the config file with: style -create\n")
 		return

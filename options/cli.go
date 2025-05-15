@@ -5,14 +5,17 @@ import (
 )
 
 type Options struct {
-	Create bool
+	Create  bool
+	Version bool
 }
 
 func Run() Options {
 	var create = flag.Bool("create", false, "Create a config file")
+	var version = flag.Bool("version", false, "Version of styler")
 	flag.Parse()
 
 	return Options{
-		Create: *create,
+		Create:  *create,
+		Version: *version,
 	}
 }

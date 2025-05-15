@@ -22,6 +22,11 @@ type Command struct {
 func Run() {
 	opts := options.Run()
 
+	if opts.Version {
+		fmt.Printf("Styler version %v\n", options.Version)
+		return
+	}
+
 	if opts.Create {
 		options.Create()
 		return
