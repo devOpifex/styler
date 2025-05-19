@@ -5,7 +5,7 @@ ui <- fluidPage(
   div(
     class = "display-flex padding-2 margin-bottom-2 width-40",
     div(
-      class = "flex-grow~1",
+      class = "flex-grow~1 box-shadow-1-1-1~2-grey",
       h1("Hello, world!", class = "color-red-400 hover:color-cyan-500")
     ),
     div(

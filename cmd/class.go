@@ -53,40 +53,71 @@ func (c *Command) makeProperty(str string) string {
 	str = prefixRegex.ReplaceAllString(str, "")
 
 	strict := false
-	last := strings.LastIndex(str, "-")
+	separator := "-"
 	if strings.Contains(str, "~") {
 		strict = true
-		last = strings.LastIndex(str, "~")
+		separator = "~"
 	}
 
-	if last == -1 {
+	// First check for color patterns like "color-red-400"
+	colorStr, isColor := c.makeColor(str)
+	if isColor {
+		return colorStr
+	}
+
+	// Split the string by the separator
+	parts := strings.Split(str, separator)
+	if len(parts) <= 1 {
 		return str
 	}
 
-	value := str[last+1:]
-
-	intValue, err := strconv.Atoi(value)
-
-	if err == nil {
-		// it ends in a number it may be a color, e.g.: color-red-400
-		str, ok := c.makeColor(str)
-		if ok {
-			return str
+	// Find the first part that contains a number
+	propertyEndIdx := -1
+	for i, part := range parts {
+		// Check if this part contains a number
+		if regexp.MustCompile(`\d`).MatchString(part) {
+			propertyEndIdx = i
+			break
 		}
-		val := float32(intValue)
-		if !strict {
-			val = float32(intValue) / float32(c.Config.Divider)
-		}
-
-		property := str[:last] + ":" + fmt.Sprintf("%v", val)
-
-		if strict {
-			return property
-		}
-		return property + c.Config.Unit
 	}
 
-	return str[:last] + ":" + value
+	// If no number found, use traditional approach with last part as value
+	if propertyEndIdx == -1 {
+		last := strings.LastIndex(str, separator)
+		if last == -1 {
+			return str
+		}
+		return str[:last] + ":" + str[last+1:]
+	}
+
+	// Join parts before the property end to form the property name
+	property := strings.Join(parts[:propertyEndIdx], "-")
+	
+	// For strict values, just join remaining parts with spaces
+	if strict {
+		valueStr := strings.Join(parts[propertyEndIdx:], " ")
+		return property + ":" + valueStr
+	}
+	
+	// Process each value part individually
+	valueParts := parts[propertyEndIdx:]
+	processedValues := make([]string, len(valueParts))
+	
+	for i, part := range valueParts {
+		// Try to convert to number
+		numValue, err := strconv.Atoi(part)
+		if err == nil {
+			// It's a number, apply divider and unit
+			val := float32(numValue) / float32(c.Config.Divider)
+			processedValues[i] = fmt.Sprintf("%v%s", val, c.Config.Unit)
+		} else {
+			// Not a number, keep as is
+			processedValues[i] = part
+		}
+	}
+	
+	// Join the processed values with spaces
+	return property + ":" + strings.Join(processedValues, " ")
 }
 
 func (c *Command) makeColor(str string) (string, bool) {
