@@ -52,21 +52,14 @@ func (c *Command) makeProperty(str string) string {
 	str = mediaRegex.ReplaceAllString(str, "")
 	str = prefixRegex.ReplaceAllString(str, "")
 
-	strict := false
-	separator := "-"
-	if strings.Contains(str, "~") {
-		strict = true
-		separator = "~"
-	}
-
 	// First check for color patterns like "color-red-400"
 	colorStr, isColor := c.makeColor(str)
 	if isColor {
 		return colorStr
 	}
 
-	// Split the string by the separator
-	parts := strings.Split(str, separator)
+	// Split by - to get parts
+	parts := strings.Split(str, "-")
 	if len(parts) <= 1 {
 		return str
 	}
@@ -74,8 +67,8 @@ func (c *Command) makeProperty(str string) string {
 	// Find the first part that contains a number
 	propertyEndIdx := -1
 	for i, part := range parts {
-		// Check if this part contains a number
-		if regexp.MustCompile(`\d`).MatchString(part) {
+		// Check if this part contains a number (either directly or after ~)
+		if regexp.MustCompile(`\d`).MatchString(part) || (strings.Contains(part, "~") && regexp.MustCompile(`\d`).MatchString(strings.Split(part, "~")[1])) {
 			propertyEndIdx = i
 			break
 		}
@@ -83,7 +76,7 @@ func (c *Command) makeProperty(str string) string {
 
 	// If no number found, use traditional approach with last part as value
 	if propertyEndIdx == -1 {
-		last := strings.LastIndex(str, separator)
+		last := strings.LastIndex(str, "-")
 		if last == -1 {
 			return str
 		}
@@ -93,26 +86,49 @@ func (c *Command) makeProperty(str string) string {
 	// Join parts before the property end to form the property name
 	property := strings.Join(parts[:propertyEndIdx], "-")
 	
-	// For strict values, just join remaining parts with spaces
-	if strict {
-		valueStr := strings.Join(parts[propertyEndIdx:], " ")
-		return property + ":" + valueStr
-	}
-	
 	// Process each value part individually
 	valueParts := parts[propertyEndIdx:]
 	processedValues := make([]string, len(valueParts))
 	
 	for i, part := range valueParts {
-		// Try to convert to number
-		numValue, err := strconv.Atoi(part)
-		if err == nil {
-			// It's a number, apply divider and unit
-			val := float32(numValue) / float32(c.Config.Divider)
-			processedValues[i] = fmt.Sprintf("%v%s", val, c.Config.Unit)
+		// Check if this part contains a ~ for strict value
+		if strings.Contains(part, "~") {
+			// Split by ~ and take the strict value
+			strictParts := strings.Split(part, "~")
+			
+			// First part could be empty if ~ is at the beginning
+			if strictParts[0] != "" {
+				// First part is not strict, process normally
+				numValue, err := strconv.Atoi(strictParts[0])
+				if err == nil {
+					// It's a number, apply divider and unit
+					val := float32(numValue) / float32(c.Config.Divider)
+					processedValues[i] = fmt.Sprintf("%v%s", val, c.Config.Unit)
+				} else {
+					// Not a number, keep as is
+					processedValues[i] = strictParts[0]
+				}
+			}
+			
+			// Second part is strict, don't apply divider or unit
+			if len(strictParts) > 1 {
+				if processedValues[i] != "" {
+					processedValues[i] += " " + strictParts[1]
+				} else {
+					processedValues[i] = strictParts[1]
+				}
+			}
 		} else {
-			// Not a number, keep as is
-			processedValues[i] = part
+			// No ~ in this part, process normally
+			numValue, err := strconv.Atoi(part)
+			if err == nil {
+				// It's a number, apply divider and unit
+				val := float32(numValue) / float32(c.Config.Divider)
+				processedValues[i] = fmt.Sprintf("%v%s", val, c.Config.Unit)
+			} else {
+				// Not a number, keep as is
+				processedValues[i] = part
+			}
 		}
 	}
 	
