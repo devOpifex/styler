@@ -56,3 +56,18 @@ e.g.: `flex~1` results in `flex: 1`
 - Media queries can be edited in `.styler` config file
 - Colors can be edited in `.styler` config file
 - Extracted CSS properties are checked against the [W3C CSS Properties](https://www.w3.org/Style/CSS/all-properties.en.html) table
+
+## Advanced Property Values
+
+Styler now supports complex CSS property values with multiple components:
+
+- **Multiple Value Parts**: Create properties with multiple values like `box-shadow-1-2-4-red`
+  which becomes `box-shadow: 0.25rem 0.5rem 1rem red`
+
+- **Selective Strict Values**: Use `~` to mark specific parts as "strict" (no division or unit):
+  - `border-1-solid-red` → `border: 0.25rem solid red` (number is divided by 4, unit added)
+  - `border-~1-solid-red` → `border: 1 solid red` (strict number, no division or unit)
+  - `border-1~solid-red` → `border: 0.25rem solid red` (only affects the part with ~)
+  - `box-shadow~1-2-2-grey` → `box-shadow: 1 0.5rem 0.5rem grey` (strict property name)
+
+This approach gives you fine-grained control over how numeric values are processed.
