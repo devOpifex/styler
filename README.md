@@ -418,3 +418,4 @@ e.g.: `flex~1` results in `flex: 1`
   - `border-~1-solid-red` → `border: 1 solid red` (strict number, no division or unit)
   - `border-1~solid-red` → `border: 0.25rem solid red` (only affects the part with ~)
   - `box-shadow~1-2-2-grey` → `box-shadow: 1 0.5rem 0.5rem grey` (strict property name)
+- Shorthand properties can be used in place of longhand properties, e.g.: `d-f` -> `display: flex`
