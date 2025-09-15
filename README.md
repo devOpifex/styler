@@ -62,13 +62,14 @@ The configuration allows you to customize:
 - **Divider**: Number to divide numeric values by (default: `4`)
 - **Media Queries**: Custom breakpoint definitions
 - **Colors**: Custom color palette definitions
+- **Shortcuts**: Custom shorthands for common CSS properties
 
 <details>
 <summary>Default Configuration</summary>
 
 ```json
 {
-    "version": "0.0.3",
+    "version": "0.0.4",
     "pattern": "*.R|*.r|*.js|*.html",
     "directory": ".",
     "output": "style.min.css",
@@ -383,6 +384,16 @@ The configuration allows you to customize:
             "900": "#18181b",
             "950": "#09090b"
         }
+    },
+    "shortcuts": {
+        "b": "bottom",
+        "h": "height",
+        "l": "left",
+        "m": "margin",
+        "p": "padding",
+        "r": "right",
+        "t": "top",
+        "w": "width"
     }
 }
 ```

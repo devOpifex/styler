@@ -25,6 +25,7 @@ type Config struct {
 	Divider   int                          `json:"divider"`
 	Media     []Media                      `json:"media"`
 	Colors    map[string]map[string]string `json:"colors"`
+	Shortcuts map[string]string            `json:"shortcuts"`
 }
 
 var colors = map[string]map[string]string{
@@ -316,6 +317,19 @@ var colors = map[string]map[string]string{
 	},
 }
 
+var shortcuts = map[string]string{
+	"m": "margin",
+	"p": "padding",
+	"w": "width",
+	"h": "height",
+	"t": "top",
+	"r": "right",
+	"b": "bottom",
+	"l": "left",
+	"d": "display",
+	"f": "flex",
+}
+
 func New() Config {
 	return Config{
 		Version:   Version,
@@ -346,7 +360,8 @@ func New() Config {
 				Name:     "xxl",
 			},
 		},
-		Colors: colors,
+		Colors:    colors,
+		Shortcuts: shortcuts,
 	}
 }
 

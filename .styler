@@ -1,5 +1,5 @@
 {
-    "version": "0.0.3",
+    "version": "0.0.4",
     "pattern": "*.R|*.r|*.js|*.html",
     "directory": "test",
     "output": "test/style.min.css",
@@ -8,7 +8,7 @@
     "media": [
         {
             "maxWidth": "",
-            "minWidth": "640px",
+            "minWidth": "576px",
             "name": "sm"
         },
         {
@@ -18,13 +18,18 @@
         },
         {
             "maxWidth": "",
-            "minWidth": "1024px",
+            "minWidth": "992px",
             "name": "lg"
         },
         {
             "maxWidth": "",
-            "minWidth": "1280px",
+            "minWidth": "1200px",
             "name": "xl"
+        },
+        {
+            "maxWidth": "",
+            "minWidth": "1400px",
+            "name": "xxl"
         }
     ],
     "colors": {
@@ -314,5 +319,17 @@
             "900": "#18181b",
             "950": "#09090b"
         }
+    },
+    "shortcuts": {
+        "b": "bottom",
+        "h": "height",
+        "l": "left",
+        "m": "margin",
+        "p": "padding",
+        "r": "right",
+        "t": "top",
+        "w": "width",
+        "x": "inline",
+        "y": "block"
     }
 }

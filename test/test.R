@@ -6,10 +6,11 @@ ui <- fluidPage(
     class = "display-flex padding-2 margin-bottom-2 width-40",
     div(
       class = "flex-grow~1 box-shadow-1-1-1~2-grey",
-      h1("Hello, world!", class = "color-red-400 hover:color-cyan-500")
+      h1("Hello, world!", class = "color-red-400 hover:color-cyan-500"),
+      h3("Must have loads of padding", class = "p-t-50")
     ),
     div(
-      class = "flex-shrink~1 md@display-none",
+      class = "flex-shrink~1 sm@display-none",
       h2(
         "This is hidden on medium screens and larger hello-world",
         class = "color-blue hover:color-green"
@@ -18,7 +19,6 @@ ui <- fluidPage(
   )
 )
 
-server <- \(input, output, session) {
-}
+server <- \(input, output, session) {}
 
 shinyApp(ui, server)

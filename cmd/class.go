@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -39,18 +40,16 @@ func (c *Command) checkProperty(str string) bool {
 		return false
 	}
 
-	for _, p := range c.Properties {
-		if p == property[0] {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(c.Properties, property[0])
 }
 
 func (c *Command) makeProperty(str string) string {
 	// remove media and prefix from attribute
 	str = mediaRegex.ReplaceAllString(str, "")
 	str = prefixRegex.ReplaceAllString(str, "")
+
+	// Expand shortcuts BEFORE any other processing
+	str = c.expandShortcuts(str)
 
 	// First check for color patterns like "color-red-400"
 	colorStr, isColor := c.makeColor(str)
@@ -85,17 +84,17 @@ func (c *Command) makeProperty(str string) string {
 
 	// Join parts before the property end to form the property name
 	property := strings.Join(parts[:propertyEndIdx], "-")
-	
+
 	// Process each value part individually
 	valueParts := parts[propertyEndIdx:]
 	processedValues := make([]string, len(valueParts))
-	
+
 	for i, part := range valueParts {
 		// Check if this part contains a ~ for strict value
 		if strings.Contains(part, "~") {
 			// Split by ~ and take the strict value
 			strictParts := strings.Split(part, "~")
-			
+
 			// First part could be empty if ~ is at the beginning
 			if strictParts[0] != "" {
 				// First part is not strict, process normally
@@ -109,7 +108,7 @@ func (c *Command) makeProperty(str string) string {
 					processedValues[i] = strictParts[0]
 				}
 			}
-			
+
 			// Second part is strict, don't apply divider or unit
 			if len(strictParts) > 1 {
 				if processedValues[i] != "" {
@@ -131,7 +130,7 @@ func (c *Command) makeProperty(str string) string {
 			}
 		}
 	}
-	
+
 	// Join the processed values with spaces
 	return property + ":" + strings.Join(processedValues, " ")
 }
@@ -155,6 +154,60 @@ func (c *Command) makeColor(str string) (string, bool) {
 	}
 
 	return str, false
+}
+
+func (c *Command) expandShortcuts(str string) string {
+	if len(c.Config.Shortcuts) == 0 {
+		return str
+	}
+
+	return c.expandRegularShortcuts(str)
+}
+
+func (c *Command) expandRegularShortcuts(str string) string {
+	parts := strings.Split(str, "-")
+	if len(parts) <= 1 {
+		return str
+	}
+
+	// Expand shortcuts in property parts (before values)
+	expanded := make([]string, len(parts))
+	copy(expanded, parts)
+
+	for i, part := range parts {
+		// Stop expanding when we hit a numeric value or potential color
+		if regexp.MustCompile(`\d`).MatchString(part) || c.isColorPart(i, parts) {
+			break
+		}
+
+		if replacement, exists := c.Config.Shortcuts[part]; exists {
+			expanded[i] = replacement
+		}
+	}
+
+	return strings.Join(expanded, "-")
+}
+
+func (c *Command) isColorPart(index int, parts []string) bool {
+	// Check if this might be part of a color pattern
+	// We need at least 2 more parts after current index for color-shade pattern
+	if index >= len(parts)-2 {
+		return false
+	}
+
+	// Look ahead to see if we have a color-shade pattern
+	// For example: "color-red-400" where current part is "color", next is "red", and after that is "400"
+	if index <= len(parts)-3 {
+		colorName := parts[index+1]
+		shadeName := parts[index+2]
+		if colorMap, exists := c.Config.Colors[colorName]; exists {
+			if _, exists := colorMap[shadeName]; exists {
+				return true
+			}
+		}
+	}
+
+	return false
 }
 
 func classType(str string) string {
