@@ -1,6 +1,4 @@
-# Styler
-
-Tool to generate CSS classes, a bit like tailwind but less strict.
+![](banner2.png)
 
 ## Install
 
