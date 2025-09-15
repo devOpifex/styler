@@ -47,11 +47,11 @@ func (c *Command) mediaProperty(name string) string {
 		}
 
 		if m.MinWidth != "" {
-			return "@media (min-width: " + m.MinWidth + "){"
+			return "@media(min-width: " + m.MinWidth + "){"
 		}
 
 		if m.MaxWidth != "" {
-			return "@media (max-width: " + m.MaxWidth + "){"
+			return "@media(max-width: " + m.MaxWidth + "){"
 		}
 	}
 
@@ -59,4 +59,3 @@ func (c *Command) mediaProperty(name string) string {
 
 	return ""
 }
-
