@@ -3,6 +3,7 @@ package cmd
 import (
 	"log"
 	"os"
+	"strings"
 )
 
 func (c *Command) Css(pretty bool) {
@@ -24,13 +25,29 @@ func (c *Command) Css(pretty bool) {
 
 		css += c.mediaProperty(media)
 		for k, v := range m {
-			css += "." + k + space + "{" + linebreak + tab + v + linebreak + "}" + linebreak
+			selector := "." + k
+			if strings.Contains(k, "hover\\:") {
+				selector += ":hover"
+			} else if strings.Contains(k, "active\\:") {
+				selector += ":active"
+			} else if strings.Contains(k, "focus\\:") {
+				selector += ":focus"
+			}
+			css += selector + space + "{" + linebreak + tab + v + linebreak + "}" + linebreak
 		}
 		css += "}"
 	}
 
 	for k, v := range c.ClassMap {
-		css += "." + k + space + "{" + linebreak + tab + v + linebreak + "}" + linebreak
+		selector := "." + k
+		if strings.Contains(k, "hover\\:") {
+			selector += ":hover"
+		} else if strings.Contains(k, "active\\:") {
+			selector += ":active"
+		} else if strings.Contains(k, "focus\\:") {
+			selector += ":focus"
+		}
+		css += selector + space + "{" + linebreak + tab + v + linebreak + "}" + linebreak
 	}
 
 	c.CSS = css
