@@ -18,6 +18,18 @@ func (c *Command) Css(pretty bool) {
 		space = " "
 	}
 
+	for k, v := range c.ClassMap {
+		selector := "." + k
+		if strings.Contains(k, "hover\\:") {
+			selector += ":hover"
+		} else if strings.Contains(k, "active\\:") {
+			selector += ":active"
+		} else if strings.Contains(k, "focus\\:") {
+			selector += ":focus"
+		}
+		css += selector + space + "{" + linebreak + tab + v + linebreak + "}" + linebreak
+	}
+
 	for media, m := range c.MediaMaps {
 		if len(m) == 0 {
 			continue
@@ -36,18 +48,6 @@ func (c *Command) Css(pretty bool) {
 			css += selector + space + "{" + linebreak + tab + v + linebreak + "}" + linebreak
 		}
 		css += "}"
-	}
-
-	for k, v := range c.ClassMap {
-		selector := "." + k
-		if strings.Contains(k, "hover\\:") {
-			selector += ":hover"
-		} else if strings.Contains(k, "active\\:") {
-			selector += ":active"
-		} else if strings.Contains(k, "focus\\:") {
-			selector += ":focus"
-		}
-		css += selector + space + "{" + linebreak + tab + v + linebreak + "}" + linebreak
 	}
 
 	c.CSS = css
